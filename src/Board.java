@@ -17,7 +17,7 @@ public class Board extends JFrame implements ActionListener {
     JButton exitGame = new JButton();
     JButton restartGame = new JButton();
     JButton possibleMoves = new JButton();
-    JPanel[][] squares = new JPanel[8][8];
+    JButton[][] squares = new JButton[8][8];
     Path currentRelativePath = Paths.get("");
     String s = currentRelativePath.toAbsolutePath().toString();
 
@@ -27,13 +27,13 @@ public class Board extends JFrame implements ActionListener {
         this.setText();
         this.addComponents();
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        int i = 0, j = 0;
+        int i, j;
         String str = "";
         for(i=0; i<8;i++)
         {
             for(j=0; j<8;j++)
             {
-                JPanel tempSquare = new JPanel();
+                JButton tempSquare = new JButton();
                 tempSquare.setBounds((385 / 8 * i), (340 / 8 * j),385/8,340/8);
                 if( i % 2 == 0 && j % 2 == 1 || i % 2 == 1 && j % 2 == 0)
                 {
@@ -43,27 +43,35 @@ public class Board extends JFrame implements ActionListener {
                 {
                     tempSquare.setBackground(Color.white);
                 }
-                BufferedImage myPicture = null;
+                BufferedImage myPicture;
                 if(j <= 1)
                 {
-                    str = addBlackPieceImages(i, j, s);
+                    str = addBlackPieceImages(i, j, s, tempSquare);
+                }
+                else if(j >= 6)
+                {
+                    str = addWhitePieceImages(i, j, s, tempSquare);
                 }
                 else
                 {
-                    str = addWhitePieceImages(i, j, s);
+                    int x = (-1*j)+8;
+                    char y = (char)(i+65);
+                    String tileLocation = String.valueOf(x)+y;
+                    tempSquare.setActionCommand(tileLocation);
                 }
                 if( j <= 1 || j >= 6) {
                     try {
                         myPicture = ImageIO.read(new File(str));
                         Image scaledImage = myPicture.getScaledInstance(tempSquare.getWidth(), tempSquare.getHeight(), Image.SCALE_SMOOTH);
-                        JLabel picLabel = new JLabel(new ImageIcon(scaledImage));
-                        tempSquare.add(picLabel);
+                        tempSquare.setIcon(new ImageIcon(scaledImage));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
+                tempSquare.addActionListener(this);
                 squares[i][j] = tempSquare;
                 this.add(squares[i][j]);
+
             }
         }
         this.add(this.middlePanel);
@@ -96,66 +104,92 @@ public class Board extends JFrame implements ActionListener {
         possibleMoves.addActionListener(this);
     }
 
-    private String addBlackPieceImages(int i, int j, String s){
+    private String addBlackPieceImages(int i, int j, String s, JButton tempSquare){
         String str = "";
+        int x = (-1*j)+8;
+        char y = (char)(i+65);
+        String tileLocation = String.valueOf(x)+y+',';
         if(j == 1)
         {
             str = s+"\\src\\ChessPieces\\bPawn.png";
+            tempSquare.setActionCommand(tileLocation+"bPawn");
         }
         if(j == 0 && i == 0 || j == 0 && i == 7)
         {
             str = s+"\\src\\ChessPieces\\bRook.png";
+            tempSquare.setActionCommand(tileLocation+"bRook");
         }
         if(j == 0 && i == 1 || j == 0 && i == 6)
         {
             str = s+"\\src\\ChessPieces\\bKnight.png";
+            tempSquare.setActionCommand(tileLocation+"bKnight");
         }
         if(j == 0 && i == 2 || j == 0 && i == 5)
         {
             str = s+"\\src\\ChessPieces\\bBishop.png";
+            tempSquare.setActionCommand(tileLocation+"bBishop");
         }
         if(j == 0 && i == 4)
         {
             str = s+"\\src\\ChessPieces\\bKing.png";
+            tempSquare.setActionCommand(tileLocation+"bKing");
         }
         if(j == 0 && i == 3)
         {
             str = s+"\\src\\ChessPieces\\bQueen.png";
+            tempSquare.setActionCommand(tileLocation+"bQueen");
         }
         return str;
     }
 
-    private String addWhitePieceImages(int i, int j, String s){
+    private String addWhitePieceImages(int i, int j, String s, JButton tempSquare){
         String str = "";
+        int x = (-1*j)+8;
+        char y = (char)(i+65);
+        String tileLocation = String.valueOf(x)+y+',';
         if(j == 6)
         {
             str = s+"\\src\\ChessPieces\\wPawn.png";
+            tempSquare.setActionCommand(tileLocation+"wPawn");
         }
         if(j == 7 && i == 0 || j == 7 && i == 7)
         {
             str = s+"\\src\\ChessPieces\\wRook.png";
+            tempSquare.setActionCommand(tileLocation+"wRook");
         }
         if(j == 7 && i == 1 || j == 7 && i == 6)
         {
             str = s+"\\src\\ChessPieces\\wKnight.png";
+            tempSquare.setActionCommand(tileLocation+"wKnight");
         }
         if(j == 7 && i == 2 || j == 7 && i == 5)
         {
             str = s+"\\src\\ChessPieces\\wBishop.png";
+            tempSquare.setActionCommand(tileLocation+"wBishop");
         }
         if(j == 7 && i == 3)
         {
             str = s+"\\src\\ChessPieces\\wKing.png";
+            tempSquare.setActionCommand(tileLocation+"wKing");
         }
         if(j == 7 && i == 4)
         {
             str = s+"\\src\\ChessPieces\\wQueen.png";
+            tempSquare.setActionCommand(tileLocation+"wQueen");
         }
         return str;
     }
 
     public void actionPerformed(ActionEvent ae) {
         String str = ae.getActionCommand();
+        if( !str.equals("") )
+        {
+            System.out.print(str);
+        }
+        if( str.equals("") )
+        {
+            System.out.print("Chess Piece");
+        }
         if( str.equals("Exit Game"))
         {
             System.exit(0);
@@ -165,7 +199,6 @@ public class Board extends JFrame implements ActionListener {
             Board b = new Board();
             this.setVisible(false);
             b.setVisible(true);
-
         }
     }
 }
