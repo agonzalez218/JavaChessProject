@@ -4,8 +4,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -18,8 +16,10 @@ public class Board extends JFrame implements ActionListener {
     JButton restartGame = new JButton();
     JButton possibleMoves = new JButton();
     JButton[][] squares = new JButton[8][8];
-    Path currentRelativePath = Paths.get("");
-    String s = currentRelativePath.toAbsolutePath().toString();
+    String s = "src\\ChessPieces\\";
+    String movingPiece;
+    String originalLocation;
+    Boolean pieceSelected = false;
 
     public Board(){
         this.form.setLayout(null);
@@ -43,7 +43,7 @@ public class Board extends JFrame implements ActionListener {
                 {
                     tempSquare.setBackground(Color.white);
                 }
-                BufferedImage myPicture;
+
                 if(j <= 1)
                 {
                     str = addBlackPieceImages(i, j, s, tempSquare);
@@ -54,19 +54,14 @@ public class Board extends JFrame implements ActionListener {
                 }
                 else
                 {
+                    // Convert matrix location into chess board location then add to button
                     int x = (-1*j)+8;
                     char y = (char)(i+65);
                     String tileLocation = String.valueOf(x)+y;
                     tempSquare.setActionCommand(tileLocation);
                 }
                 if( j <= 1 || j >= 6) {
-                    try {
-                        myPicture = ImageIO.read(new File(str));
-                        Image scaledImage = myPicture.getScaledInstance(tempSquare.getWidth(), tempSquare.getHeight(), Image.SCALE_SMOOTH);
-                        tempSquare.setIcon(new ImageIcon(scaledImage));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    addIconToButton(str, tempSquare);
                 }
                 tempSquare.addActionListener(this);
                 squares[i][j] = tempSquare;
@@ -111,32 +106,32 @@ public class Board extends JFrame implements ActionListener {
         String tileLocation = String.valueOf(x)+y+',';
         if(j == 1)
         {
-            str = s+"\\src\\ChessPieces\\bPawn.png";
+            str = s+"bPawn.png";
             tempSquare.setActionCommand(tileLocation+"bPawn");
         }
         if(j == 0 && i == 0 || j == 0 && i == 7)
         {
-            str = s+"\\src\\ChessPieces\\bRook.png";
+            str = s+"bRook.png";
             tempSquare.setActionCommand(tileLocation+"bRook");
         }
         if(j == 0 && i == 1 || j == 0 && i == 6)
         {
-            str = s+"\\src\\ChessPieces\\bKnight.png";
+            str = s+"bKnight.png";
             tempSquare.setActionCommand(tileLocation+"bKnight");
         }
         if(j == 0 && i == 2 || j == 0 && i == 5)
         {
-            str = s+"\\src\\ChessPieces\\bBishop.png";
+            str = s+"bBishop.png";
             tempSquare.setActionCommand(tileLocation+"bBishop");
         }
         if(j == 0 && i == 4)
         {
-            str = s+"\\src\\ChessPieces\\bKing.png";
+            str = s+"bKing.png";
             tempSquare.setActionCommand(tileLocation+"bKing");
         }
         if(j == 0 && i == 3)
         {
-            str = s+"\\src\\ChessPieces\\bQueen.png";
+            str = s+"bQueen.png";
             tempSquare.setActionCommand(tileLocation+"bQueen");
         }
         return str;
@@ -149,56 +144,94 @@ public class Board extends JFrame implements ActionListener {
         String tileLocation = String.valueOf(x)+y+',';
         if(j == 6)
         {
-            str = s+"\\src\\ChessPieces\\wPawn.png";
+            str = s+"wPawn.png";
             tempSquare.setActionCommand(tileLocation+"wPawn");
         }
         if(j == 7 && i == 0 || j == 7 && i == 7)
         {
-            str = s+"\\src\\ChessPieces\\wRook.png";
+            str = s+"wRook.png";
             tempSquare.setActionCommand(tileLocation+"wRook");
         }
         if(j == 7 && i == 1 || j == 7 && i == 6)
         {
-            str = s+"\\src\\ChessPieces\\wKnight.png";
+            str = s+"wKnight.png";
             tempSquare.setActionCommand(tileLocation+"wKnight");
         }
         if(j == 7 && i == 2 || j == 7 && i == 5)
         {
-            str = s+"\\src\\ChessPieces\\wBishop.png";
+            str = s+"wBishop.png";
             tempSquare.setActionCommand(tileLocation+"wBishop");
         }
         if(j == 7 && i == 3)
         {
-            str = s+"\\src\\ChessPieces\\wKing.png";
+            str = s+"wKing.png";
             tempSquare.setActionCommand(tileLocation+"wKing");
         }
         if(j == 7 && i == 4)
         {
-            str = s+"\\src\\ChessPieces\\wQueen.png";
+            str = s+"wQueen.png";
             tempSquare.setActionCommand(tileLocation+"wQueen");
         }
         return str;
     }
 
+    public void addIconToButton(String str, JButton button)
+    {
+        BufferedImage myPicture;
+        try {
+            myPicture = ImageIO.read(new File(str));
+            Image scaledImage = myPicture.getScaledInstance(button.getWidth(), button.getHeight(), Image.SCALE_SMOOTH);
+            button.setIcon(new ImageIcon(scaledImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void actionPerformed(ActionEvent ae) {
         String str = ae.getActionCommand();
-        if( !str.equals("") )
-        {
-            System.out.print(str);
-        }
-        if( str.equals("") )
-        {
-            System.out.print("Chess Piece");
-        }
         if( str.equals("Exit Game"))
         {
             System.exit(0);
         }
-        if( str.equals("Restart Game"))
+        else if( str.equals("Restart Game"))
         {
             Board b = new Board();
             this.setVisible(false);
             b.setVisible(true);
+        }
+        else if( str.length() > 2 && !pieceSelected)
+        {
+            String[] arrOfStr = str.split(",");
+            originalLocation = arrOfStr[0];
+            movingPiece = arrOfStr[1];
+            pieceSelected = true;
+        }
+        else if( pieceSelected )
+        {
+            // Convert to matrix location
+            int xO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
+            int yO = originalLocation.charAt(1)-65;
+
+            // Clear action command to just contain location and no image
+            squares[yO][xO].setActionCommand(originalLocation);
+            squares[yO][xO].setIcon(null);
+
+            // Convert current (new) tile to matrix location
+            int xN = (Character.getNumericValue(str.charAt(0))-8)*-1;
+            int yN = str.charAt(1)-65;
+
+            // Get Chess Board location from button
+            String[] arrOfStr = str.split(",");
+            originalLocation = arrOfStr[0];
+
+            // Set new button to contain chess piece and location
+            squares[yN][xN].setActionCommand(originalLocation+','+movingPiece);
+            addIconToButton(s+movingPiece+".png", squares[yN][xN]);
+
+            // Reset buffer and condition variables
+            originalLocation = "";
+            movingPiece = "";
+            pieceSelected = false;
         }
     }
 }
