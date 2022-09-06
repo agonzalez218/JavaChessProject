@@ -2,4 +2,5 @@
 This project is my own game of Chess made in Java.
 
 The following image is the main playing screen
-![image](https://user-images.githubusercontent.com/60588691/188192440-d7cedabd-9e51-4925-9e7c-e3b5c4b650c1.png)
+
+![ChessGame](https://user-images.githubusercontent.com/60588691/188574682-53d192e2-0bed-465d-9073-4fac6303f910.png)
