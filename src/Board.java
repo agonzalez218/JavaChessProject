@@ -24,6 +24,9 @@ public class Board extends JFrame implements ActionListener {
     String movingPiece;
     String originalLocation;
     Boolean pieceSelected = false;
+    Boolean whiteTurn = true;
+    Boolean blackTurn = false;
+    Boolean teamMoved = false;
 
     public Board(){
         this.form.setLayout(null);
@@ -179,7 +182,7 @@ public class Board extends JFrame implements ActionListener {
         if(j == 7 && i == 3)
         {
             str = s+"whKing.png";
-            tempSquare.setActionCommand(tileLocation+"whing");
+            tempSquare.setActionCommand(tileLocation+"whKing");
         }
         if(j == 7 && i == 4)
         {
@@ -203,6 +206,7 @@ public class Board extends JFrame implements ActionListener {
 
     public void determinePossibleMoves(String chessPieceOrig, int y, int x)
     {
+        System.out.println(chessPieceOrig);
         String teamColor, chessPiece;
         if( chessPieceOrig.contains("wh") )
         {
@@ -214,61 +218,126 @@ public class Board extends JFrame implements ActionListener {
             teamColor = String.valueOf(chessPieceOrig.charAt(0));
             chessPiece = chessPieceOrig.substring(1);
         }
-
+        // determine possible spaces based on chess piece and their rules
         switch (chessPiece)
         {
             case "King":
+                if(teamColor.equals("b"))
+                {
+                    verticalHorizontalMovement(x, y+1, 1, "wh", "b", true);
+                    verticalHorizontalMovement(x, y-1, 2, "wh", "b", true);
+                    verticalHorizontalMovement(x+1, y, 3, "wh", "b", true);
+                    verticalHorizontalMovement(x-1, y, 4, "wh", "b", true);
+                    diagonalMovement(x+1, y+1, 1, "wh", "b", true);
+                    diagonalMovement(x-1, y+1, 2, "wh", "b", true);
+                    diagonalMovement(x+1, y-1, 3, "wh", "b", true);
+                    diagonalMovement(x-1, y-1, 4, "wh", "b", true);
+
+                }
+                else if(teamColor.equals("wh"))
+                {
+                    verticalHorizontalMovement(x, y+1, 1, "b", "wh", true);
+                    verticalHorizontalMovement(x, y-1, 2, "b", "wh", true);
+                    verticalHorizontalMovement(x+1, y, 3, "b", "wh", true);
+                    verticalHorizontalMovement(x-1, y, 4, "b", "wh", true);
+                    diagonalMovement(x+1, y+1, 1, "b", "wh", true);
+                    diagonalMovement(x-1, y+1, 2, "b", "wh", true);
+                    diagonalMovement(x+1, y-1, 3, "b", "wh", true);
+                    diagonalMovement(x-1, y-1, 4, "b", "wh", true);
+                }
+                highlightSquareEnemy(availableEnemyTiles);
+                highlightSquare(availableTiles);
                 break;
             case "Queen":
+                if(teamColor.equals("b"))
+                {
+                    verticalHorizontalMovement(x, y+1, 1, "wh", "b", false);
+                    verticalHorizontalMovement(x, y-1, 2, "wh", "b", false);
+                    verticalHorizontalMovement(x+1, y, 3, "wh", "b", false);
+                    verticalHorizontalMovement(x-1, y, 4, "wh", "b", false);
+                    diagonalMovement(x+1, y+1, 1, "wh", "b", false);
+                    diagonalMovement(x-1, y+1, 2, "wh", "b", false);
+                    diagonalMovement(x+1, y-1, 3, "wh", "b", false);
+                    diagonalMovement(x-1, y-1, 4, "wh", "b", false);
+
+                }
+                else if(teamColor.equals("wh"))
+                {
+                    verticalHorizontalMovement(x, y+1, 1, "b", "wh", false);
+                    verticalHorizontalMovement(x, y-1, 2, "b", "wh", false);
+                    verticalHorizontalMovement(x+1, y, 3, "b", "wh", false);
+                    verticalHorizontalMovement(x-1, y, 4, "b", "wh", false);
+                    diagonalMovement(x+1, y+1, 1, "b", "wh", false);
+                    diagonalMovement(x-1, y+1, 2, "b", "wh", false);
+                    diagonalMovement(x+1, y-1, 3, "b", "wh", false);
+                    diagonalMovement(x-1, y-1, 4, "b", "wh", false);
+                }
+                highlightSquareEnemy(availableEnemyTiles);
+                highlightSquare(availableTiles);
                 break;
             case "Rook":
                 if(teamColor.equals("b"))
                 {
-                    verticalHorizontalMovement(x, y+1, 1, "wh", "b");
-                    verticalHorizontalMovement(x, y-1, 2, "wh", "b");
-                    verticalHorizontalMovement(x+1, y, 3, "wh", "b");
-                    verticalHorizontalMovement(x-1, y, 4, "wh", "b");
-                    highlightSquareEnemy(availableEnemyTiles);
-                    highlightSquare(availableTiles);
+                    verticalHorizontalMovement(x, y+1, 1, "wh", "b", false);
+                    verticalHorizontalMovement(x, y-1, 2, "wh", "b", false);
+                    verticalHorizontalMovement(x+1, y, 3, "wh", "b", false);
+                    verticalHorizontalMovement(x-1, y, 4, "wh", "b", false);
+
                 }
                 else if(teamColor.equals("wh"))
                 {
-                    verticalHorizontalMovement(x, y+1, 1, "b", "wh");
-                    verticalHorizontalMovement(x, y-1, 2, "b", "wh");
-                    verticalHorizontalMovement(x+1, y, 3, "b", "wh");
-                    verticalHorizontalMovement(x-1, y, 4, "b", "wh");
-                    highlightSquareEnemy(availableEnemyTiles);
-                    highlightSquare(availableTiles);
+                    verticalHorizontalMovement(x, y+1, 1, "b", "wh", false);
+                    verticalHorizontalMovement(x, y-1, 2, "b", "wh", false);
+                    verticalHorizontalMovement(x+1, y, 3, "b", "wh", false);
+                    verticalHorizontalMovement(x-1, y, 4, "b", "wh", false);
                 }
+                highlightSquareEnemy(availableEnemyTiles);
+                highlightSquare(availableTiles);
                 break;
             case "Bishop":
                 if(teamColor.equals("b"))
                 {
-                    diagonalMovement(x+1, y+1, 1, "wh", "b");
-                    diagonalMovement(x-1, y+1, 2, "wh", "b");
-                    diagonalMovement(x+1, y-1, 3, "wh", "b");
-                    diagonalMovement(x-1, y-1, 4, "wh", "b");
-                    highlightSquareEnemy(availableEnemyTiles);
-                    highlightSquare(availableTiles);
+                    diagonalMovement(x+1, y+1, 1, "wh", "b", false);
+                    diagonalMovement(x-1, y+1, 2, "wh", "b", false);
+                    diagonalMovement(x+1, y-1, 3, "wh", "b", false);
+                    diagonalMovement(x-1, y-1, 4, "wh", "b", false);
                 }
                 else if(teamColor.equals("wh"))
                 {
-                    diagonalMovement(x+1, y+1, 1, "b", "wh");
-                    diagonalMovement(x-1, y+1, 2, "b", "wh");
-                    diagonalMovement(x+1, y-1, 3, "b", "wh");
-                    diagonalMovement(x-1, y-1, 4, "b", "wh");
-                    highlightSquareEnemy(availableEnemyTiles);
-                    highlightSquare(availableTiles);
+                    diagonalMovement(x+1, y+1, 1, "b", "wh", false);
+                    diagonalMovement(x-1, y+1, 2, "b", "wh", false);
+                    diagonalMovement(x+1, y-1, 3, "b", "wh", false);
+                    diagonalMovement(x-1, y-1, 4, "b", "wh", false);
                 }
+                highlightSquareEnemy(availableEnemyTiles);
+                highlightSquare(availableTiles);
                 break;
             case "Knight":
                 if(teamColor.equals("b"))
                 {
-
+                    knightMovement(x+2, y+1, "wh", "b");
+                    knightMovement(x+2, y-1, "wh", "b");
+                    knightMovement(x-2, y+1, "wh", "b");
+                    knightMovement(x-2, y-1, "wh", "b");
+                    knightMovement(x+1, y+2, "wh", "b");
+                    knightMovement(x+1, y-2, "wh", "b");
+                    knightMovement(x-1, y+2, "wh", "b");
+                    knightMovement(x-1, y-2, "wh", "b");
+                    highlightSquareEnemy(availableEnemyTiles);
+                    highlightSquare(availableTiles);
                 }
                 else if(teamColor.equals("wh"))
                 {
-
+                    knightMovement(x+2, y+1, "b", "wh");
+                    knightMovement(x+2, y-1, "b", "wh");
+                    knightMovement(x-2, y+1, "b", "wh");
+                    knightMovement(x-2, y-1, "b", "wh");
+                    knightMovement(x+1, y+2, "b", "wh");
+                    knightMovement(x+1, y-2, "b", "wh");
+                    knightMovement(x-1, y+2, "b", "wh");
+                    knightMovement(x-1, y-2, "b", "wh");
+                    highlightSquareEnemy(availableEnemyTiles);
+                    highlightSquare(availableTiles);
                 }
                 break;
             case "Pawn":
@@ -336,7 +405,7 @@ public class Board extends JFrame implements ActionListener {
         }
     }
 
-    public void diagonalMovement(int x, int y, int dir, String enemy, String ally)
+    public void knightMovement(int x, int y, String enemy, String ally)
     {
         if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
         {
@@ -347,7 +416,21 @@ public class Board extends JFrame implements ActionListener {
             availableEnemyTiles.add(squares[x][y]);
             return;
         }
-        if( x == 0 || y == 0 || x == 7 || y == 7 )
+        availableTiles.add(squares[x][y]);
+    }
+
+    public void diagonalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
+    {
+        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
+        {
+            return;
+        }
+        if( squares[x][y].getActionCommand().contains(enemy))
+        {
+            availableEnemyTiles.add(squares[x][y]);
+            return;
+        }
+        if( x == 0 || y == 0 || x == 7 || y == 7 || isKing)
         {
             availableTiles.add(squares[x][y]);
             return;
@@ -355,24 +438,24 @@ public class Board extends JFrame implements ActionListener {
         switch (dir) {
             case 1 -> {
                 availableTiles.add(squares[x][y]);
-                diagonalMovement(x+1, y+1, dir, enemy, ally);
+                diagonalMovement(x+1, y+1, dir, enemy, ally, false);
             }
             case 2 -> {
                 availableTiles.add(squares[x][y]);
-                diagonalMovement(x-1, y+1, dir, enemy, ally);
+                diagonalMovement(x-1, y+1, dir, enemy, ally, false);
             }
             case 3 -> {
                 availableTiles.add(squares[x][y]);
-                diagonalMovement(x+1, y-1, dir, enemy, ally);
+                diagonalMovement(x+1, y-1, dir, enemy, ally, false);
             }
             case 4 -> {
                 availableTiles.add(squares[x][y]);
-                diagonalMovement(x-1, y-1, dir, enemy, ally);
+                diagonalMovement(x-1, y-1, dir, enemy, ally, false);
             }
         }
     }
 
-    public void verticalHorizontalMovement(int x, int y, int dir, String enemy, String ally)
+    public void verticalHorizontalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
     {
         if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
         {
@@ -383,26 +466,31 @@ public class Board extends JFrame implements ActionListener {
             availableEnemyTiles.add(squares[x][y]);
             return;
         }
-        if( x == 0 || y == 0 || x == 7 || y == 7 )
+        if( isKing )
+        {
+            availableTiles.add(squares[x][y]);
+            return;
+        }
+        if( x == 0 || y == 0 || x == 7 || y == 7  )
         {
             availableTiles.add(squares[x][y]);
         }
         switch (dir) {
             case 1 -> {
                 availableTiles.add(squares[x][y]);
-                verticalHorizontalMovement(x, y+1, dir, enemy, ally);
+                verticalHorizontalMovement(x, y+1, dir, enemy, ally, false);
             }
             case 2 -> {
                 availableTiles.add(squares[x][y]);
-                verticalHorizontalMovement(x, y-1, dir, enemy, ally);
+                verticalHorizontalMovement(x, y-1, dir, enemy, ally, false);
             }
             case 3 -> {
                 availableTiles.add(squares[x][y]);
-                verticalHorizontalMovement(x+1, y, dir, enemy, ally);
+                verticalHorizontalMovement(x+1, y, dir, enemy, ally, false);
             }
             case 4 -> {
                 availableTiles.add(squares[x][y]);
-                verticalHorizontalMovement(x-1, y, dir, enemy, ally);
+                verticalHorizontalMovement(x-1, y, dir, enemy, ally, false);
             }
         }
     }
@@ -443,27 +531,31 @@ public class Board extends JFrame implements ActionListener {
         {
             System.exit(0);
         }
-        else if( str.equals("Restart Game"))
+        if( str.equals("Restart Game"))
         {
             Board b = new Board();
             this.setVisible(false);
             b.setVisible(true);
+            return;
         }
 
         // Select original piece
-        else if( str.length() > 2 && !pieceSelected)
+        if( str.length() > 2 && !pieceSelected && ((blackTurn && str.contains("b")) || whiteTurn && str.contains("wh")))
         {
             String[] arrOfStr = str.split(",");
             originalLocation = arrOfStr[0];
             movingPiece = arrOfStr[1];
             pieceSelected = true;
+            teamMoved = true;
 
             // Convert to matrix location
             int yO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
             int xO = originalLocation.charAt(1)-65;
             determinePossibleMoves(movingPiece, yO, xO);
         }
-        else if( pieceSelected && (availableTiles.contains(squares[xN][yN]) || availableEnemyTiles.contains(squares[xN][yN])))
+
+        // Move piece
+        else if( teamMoved && pieceSelected && (availableTiles.contains(squares[xN][yN]) || availableEnemyTiles.contains(squares[xN][yN])))
         {
             // Convert to matrix location
             int yO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
@@ -485,6 +577,9 @@ public class Board extends JFrame implements ActionListener {
             originalLocation = "";
             movingPiece = "";
             pieceSelected = false;
+            teamMoved = false;
+            blackTurn = !blackTurn;
+            whiteTurn = !whiteTurn;
             highlightSquareEmpty(availableTiles, availableEnemyTiles);
         }
         // add reset buffers if no new piece selected
@@ -493,6 +588,7 @@ public class Board extends JFrame implements ActionListener {
             originalLocation = "";
             movingPiece = "";
             pieceSelected = false;
+            teamMoved = false;
             highlightSquareEmpty(availableTiles, availableEnemyTiles);
         }
     }
