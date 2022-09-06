@@ -4,6 +4,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -16,6 +18,8 @@ public class Board extends JFrame implements ActionListener {
     JButton restartGame = new JButton();
     JButton possibleMoves = new JButton();
     JButton[][] squares = new JButton[8][8];
+    List<JButton> availableTiles = new ArrayList<>();
+    List<JButton> availableEnemyTiles = new ArrayList<>();
     String s = "src\\ChessPieces\\";
     String movingPiece;
     String originalLocation;
@@ -34,7 +38,11 @@ public class Board extends JFrame implements ActionListener {
             for(j=0; j<8;j++)
             {
                 JButton tempSquare = new JButton();
+
+                // Allows equal size of squares to be created in board
                 tempSquare.setBounds((385 / 8 * i), (340 / 8 * j),385/8,340/8);
+
+                // Adds Checkerboard pattern to board
                 if( i % 2 == 0 && j % 2 == 1 || i % 2 == 1 && j % 2 == 0)
                 {
                     tempSquare.setBackground(Color.lightGray);
@@ -44,14 +52,19 @@ public class Board extends JFrame implements ActionListener {
                     tempSquare.setBackground(Color.white);
                 }
 
+                // If tile is in first two rows, pieces all start black
                 if(j <= 1)
                 {
                     str = addBlackPieceImages(i, j, s, tempSquare);
                 }
+
+                // If tile is in last two rows, pieces all start white
                 else if(j >= 6)
                 {
                     str = addWhitePieceImages(i, j, s, tempSquare);
                 }
+
+                // if between , they are normal tiles and are just assigned chess board location
                 else
                 {
                     // Convert matrix location into chess board location then add to button
@@ -66,7 +79,6 @@ public class Board extends JFrame implements ActionListener {
                 tempSquare.addActionListener(this);
                 squares[i][j] = tempSquare;
                 this.add(squares[i][j]);
-
             }
         }
         this.add(this.middlePanel);
@@ -76,7 +88,7 @@ public class Board extends JFrame implements ActionListener {
 
     private void setLocations(){
         this.setSize(400,420);
-        this.middlePanel.setBorder(new TitledBorder(new EtchedBorder(), "Chess Board"));
+        this.middlePanel.setBorder(new TitledBorder(new EtchedBorder(), ""));
         this.middlePanel.setBounds(0,0,385,340);
         this.exitGame.setBounds(260,345,110,30);
         this.restartGame.setBounds(130,345,120,30);
@@ -99,6 +111,7 @@ public class Board extends JFrame implements ActionListener {
         possibleMoves.addActionListener(this);
     }
 
+    // Adds Piece name, Piece Picture location, and Chess Board location to button
     private String addBlackPieceImages(int i, int j, String s, JButton tempSquare){
         String str = "";
         int x = (-1*j)+8;
@@ -137,6 +150,7 @@ public class Board extends JFrame implements ActionListener {
         return str;
     }
 
+    // Adds Piece name, Piece Picture location, and Chess Board location to button
     private String addWhitePieceImages(int i, int j, String s, JButton tempSquare){
         String str = "";
         int x = (-1*j)+8;
@@ -144,33 +158,33 @@ public class Board extends JFrame implements ActionListener {
         String tileLocation = String.valueOf(x)+y+',';
         if(j == 6)
         {
-            str = s+"wPawn.png";
-            tempSquare.setActionCommand(tileLocation+"wPawn");
+            str = s+"whPawn.png";
+            tempSquare.setActionCommand(tileLocation+"whPawn");
         }
         if(j == 7 && i == 0 || j == 7 && i == 7)
         {
-            str = s+"wRook.png";
-            tempSquare.setActionCommand(tileLocation+"wRook");
+            str = s+"whRook.png";
+            tempSquare.setActionCommand(tileLocation+"whRook");
         }
         if(j == 7 && i == 1 || j == 7 && i == 6)
         {
-            str = s+"wKnight.png";
-            tempSquare.setActionCommand(tileLocation+"wKnight");
+            str = s+"whKnight.png";
+            tempSquare.setActionCommand(tileLocation+"whKnight");
         }
         if(j == 7 && i == 2 || j == 7 && i == 5)
         {
-            str = s+"wBishop.png";
-            tempSquare.setActionCommand(tileLocation+"wBishop");
+            str = s+"whBishop.png";
+            tempSquare.setActionCommand(tileLocation+"whBishop");
         }
         if(j == 7 && i == 3)
         {
-            str = s+"wKing.png";
-            tempSquare.setActionCommand(tileLocation+"wKing");
+            str = s+"whKing.png";
+            tempSquare.setActionCommand(tileLocation+"whing");
         }
         if(j == 7 && i == 4)
         {
-            str = s+"wQueen.png";
-            tempSquare.setActionCommand(tileLocation+"wQueen");
+            str = s+"whQueen.png";
+            tempSquare.setActionCommand(tileLocation+"whQueen");
         }
         return str;
     }
@@ -187,8 +201,244 @@ public class Board extends JFrame implements ActionListener {
         }
     }
 
+    public void determinePossibleMoves(String chessPieceOrig, int y, int x)
+    {
+        String teamColor, chessPiece;
+        if( chessPieceOrig.contains("wh") )
+        {
+            teamColor = chessPieceOrig.substring(0,2);
+            chessPiece = chessPieceOrig.substring(2);
+        }
+        else
+        {
+            teamColor = String.valueOf(chessPieceOrig.charAt(0));
+            chessPiece = chessPieceOrig.substring(1);
+        }
+
+        switch (chessPiece)
+        {
+            case "King":
+                break;
+            case "Queen":
+                break;
+            case "Rook":
+                if(teamColor.equals("b"))
+                {
+                    verticalHorizontalMovement(x, y+1, 1, "wh", "b");
+                    verticalHorizontalMovement(x, y-1, 2, "wh", "b");
+                    verticalHorizontalMovement(x+1, y, 3, "wh", "b");
+                    verticalHorizontalMovement(x-1, y, 4, "wh", "b");
+                    highlightSquareEnemy(availableEnemyTiles);
+                    highlightSquare(availableTiles);
+                }
+                else if(teamColor.equals("wh"))
+                {
+                    verticalHorizontalMovement(x, y+1, 1, "b", "wh");
+                    verticalHorizontalMovement(x, y-1, 2, "b", "wh");
+                    verticalHorizontalMovement(x+1, y, 3, "b", "wh");
+                    verticalHorizontalMovement(x-1, y, 4, "b", "wh");
+                    highlightSquareEnemy(availableEnemyTiles);
+                    highlightSquare(availableTiles);
+                }
+                break;
+            case "Bishop":
+                if(teamColor.equals("b"))
+                {
+                    diagonalMovement(x+1, y+1, 1, "wh", "b");
+                    diagonalMovement(x-1, y+1, 2, "wh", "b");
+                    diagonalMovement(x+1, y-1, 3, "wh", "b");
+                    diagonalMovement(x-1, y-1, 4, "wh", "b");
+                    highlightSquareEnemy(availableEnemyTiles);
+                    highlightSquare(availableTiles);
+                }
+                else if(teamColor.equals("wh"))
+                {
+                    diagonalMovement(x+1, y+1, 1, "b", "wh");
+                    diagonalMovement(x-1, y+1, 2, "b", "wh");
+                    diagonalMovement(x+1, y-1, 3, "b", "wh");
+                    diagonalMovement(x-1, y-1, 4, "b", "wh");
+                    highlightSquareEnemy(availableEnemyTiles);
+                    highlightSquare(availableTiles);
+                }
+                break;
+            case "Knight":
+                if(teamColor.equals("b"))
+                {
+
+                }
+                else if(teamColor.equals("wh"))
+                {
+
+                }
+                break;
+            case "Pawn":
+                if(teamColor.equals("b")) {
+                    // If end of board, or enemy/ally no more movement allowed
+                    if( y < 7 && !(squares[x][y+1].getActionCommand().contains("b")) && !(squares[x][y+1].getActionCommand().contains("wh")))
+                    {
+                        // First move can be two tiles up
+                        if (y == 1) {
+                            availableTiles.add(squares[x][y + 2]);
+                        }
+                        availableTiles.add(squares[x][y + 1]);
+                        highlightSquare(availableTiles);
+                    }
+                    // If there is an enemy tile to the right
+                    if( x < 7 && y < 7 )
+                    {
+                        if( squares[x+1][y+1].getActionCommand().contains("wh"))
+                        {
+                            availableEnemyTiles.add(squares[x+1][y+1]);
+                            highlightSquareEnemy(availableEnemyTiles);
+                        }
+                    }
+                    // If there is an enemy tile to the left
+                    if( x > 0 && y < 7 )
+                    {
+                        if( squares[x-1][y+1].getActionCommand().contains("wh"))
+                        {
+                            availableEnemyTiles.add(squares[x-1][y+1]);
+                            highlightSquareEnemy(availableEnemyTiles);
+                        }
+                    }
+                }
+                else if(teamColor.equals("wh")) {
+                    // If end of board, or enemy/ally no more movement allowed
+                    if( y > 0 && !(squares[x][y-1].getActionCommand().contains("b")) && !(squares[x][y-1].getActionCommand().contains("wh")))
+                    {
+                        // First move can be two tiles up
+                        if (y == 6) {
+                            availableTiles.add(squares[x][y - 2]);
+                        }
+                        availableTiles.add(squares[x][y - 1]);
+                        highlightSquare(availableTiles);
+                    }
+                    // If there is an enemy tile to the left
+                    if( x > 0 && y > 0)
+                    {
+                        if( squares[x-1][y-1].getActionCommand().contains("b"))
+                        {
+                            availableEnemyTiles.add(squares[x-1][y-1]);
+                            highlightSquareEnemy(availableEnemyTiles);
+                        }
+                    }
+                    // If there is an enemy tile to the right
+                    if( x < 7 && y > 0)
+                    {
+                        if( squares[x+1][y-1].getActionCommand().contains("b"))
+                        {
+                            availableEnemyTiles.add(squares[x+1][y-1]);
+                            highlightSquareEnemy(availableEnemyTiles);
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    public void diagonalMovement(int x, int y, int dir, String enemy, String ally)
+    {
+        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
+        {
+            return;
+        }
+        if( squares[x][y].getActionCommand().contains(enemy))
+        {
+            availableEnemyTiles.add(squares[x][y]);
+            return;
+        }
+        if( x == 0 || y == 0 || x == 7 || y == 7 )
+        {
+            availableTiles.add(squares[x][y]);
+            return;
+        }
+        switch (dir) {
+            case 1 -> {
+                availableTiles.add(squares[x][y]);
+                diagonalMovement(x+1, y+1, dir, enemy, ally);
+            }
+            case 2 -> {
+                availableTiles.add(squares[x][y]);
+                diagonalMovement(x-1, y+1, dir, enemy, ally);
+            }
+            case 3 -> {
+                availableTiles.add(squares[x][y]);
+                diagonalMovement(x+1, y-1, dir, enemy, ally);
+            }
+            case 4 -> {
+                availableTiles.add(squares[x][y]);
+                diagonalMovement(x-1, y-1, dir, enemy, ally);
+            }
+        }
+    }
+
+    public void verticalHorizontalMovement(int x, int y, int dir, String enemy, String ally)
+    {
+        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
+        {
+            return;
+        }
+        if( squares[x][y].getActionCommand().contains(enemy))
+        {
+            availableEnemyTiles.add(squares[x][y]);
+            return;
+        }
+        if( x == 0 || y == 0 || x == 7 || y == 7 )
+        {
+            availableTiles.add(squares[x][y]);
+        }
+        switch (dir) {
+            case 1 -> {
+                availableTiles.add(squares[x][y]);
+                verticalHorizontalMovement(x, y+1, dir, enemy, ally);
+            }
+            case 2 -> {
+                availableTiles.add(squares[x][y]);
+                verticalHorizontalMovement(x, y-1, dir, enemy, ally);
+            }
+            case 3 -> {
+                availableTiles.add(squares[x][y]);
+                verticalHorizontalMovement(x+1, y, dir, enemy, ally);
+            }
+            case 4 -> {
+                availableTiles.add(squares[x][y]);
+                verticalHorizontalMovement(x-1, y, dir, enemy, ally);
+            }
+        }
+    }
+
+    public void highlightSquare(List<JButton> tileList)
+    {
+        for (JButton jButton : tileList) {
+            jButton.setBorder(BorderFactory.createMatteBorder(3,3,3,3,Color.yellow));
+        }
+    }
+
+    public void highlightSquareEmpty(List<JButton> tileList, List<JButton> tileEnemyList)
+    {
+        for (JButton jButton : tileList) {
+            jButton.setBorder(UIManager.getBorder("Button.border"));
+        }
+        for (JButton jButton : tileEnemyList) {
+            jButton.setBorder(UIManager.getBorder("Button.border"));
+        }
+        availableTiles = new ArrayList<>();
+        availableEnemyTiles = new ArrayList<>();
+    }
+
+    public void highlightSquareEnemy(List<JButton> tileList)
+    {
+        for (JButton jButton : tileList) {
+            jButton.setBorder(BorderFactory.createMatteBorder(3,3,3,3,Color.red));
+        }
+    }
+
     public void actionPerformed(ActionEvent ae) {
         String str = ae.getActionCommand();
+        // Convert current (new) tile to matrix location
+        int yN = (Character.getNumericValue(str.charAt(0))-8)*-1;
+        int xN = str.charAt(1)-65;
+
         if( str.equals("Exit Game"))
         {
             System.exit(0);
@@ -199,39 +449,51 @@ public class Board extends JFrame implements ActionListener {
             this.setVisible(false);
             b.setVisible(true);
         }
+
+        // Select original piece
         else if( str.length() > 2 && !pieceSelected)
         {
             String[] arrOfStr = str.split(",");
             originalLocation = arrOfStr[0];
             movingPiece = arrOfStr[1];
             pieceSelected = true;
+
+            // Convert to matrix location
+            int yO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
+            int xO = originalLocation.charAt(1)-65;
+            determinePossibleMoves(movingPiece, yO, xO);
         }
-        else if( pieceSelected )
+        else if( pieceSelected && (availableTiles.contains(squares[xN][yN]) || availableEnemyTiles.contains(squares[xN][yN])))
         {
             // Convert to matrix location
-            int xO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
-            int yO = originalLocation.charAt(1)-65;
+            int yO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
+            int xO = originalLocation.charAt(1)-65;
 
             // Clear action command to just contain location and no image
-            squares[yO][xO].setActionCommand(originalLocation);
-            squares[yO][xO].setIcon(null);
-
-            // Convert current (new) tile to matrix location
-            int xN = (Character.getNumericValue(str.charAt(0))-8)*-1;
-            int yN = str.charAt(1)-65;
+            squares[xO][yO].setActionCommand(originalLocation);
+            squares[xO][yO].setIcon(null);
 
             // Get Chess Board location from button
             String[] arrOfStr = str.split(",");
             originalLocation = arrOfStr[0];
 
             // Set new button to contain chess piece and location
-            squares[yN][xN].setActionCommand(originalLocation+','+movingPiece);
-            addIconToButton(s+movingPiece+".png", squares[yN][xN]);
+            squares[xN][yN].setActionCommand(originalLocation+','+movingPiece);
+            addIconToButton(s+movingPiece+".png", squares[xN][yN]);
 
             // Reset buffer and condition variables
             originalLocation = "";
             movingPiece = "";
             pieceSelected = false;
+            highlightSquareEmpty(availableTiles, availableEnemyTiles);
+        }
+        // add reset buffers if no new piece selected
+        else
+        {
+            originalLocation = "";
+            movingPiece = "";
+            pieceSelected = false;
+            highlightSquareEmpty(availableTiles, availableEnemyTiles);
         }
     }
 }
