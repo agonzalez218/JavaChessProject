@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -16,6 +17,8 @@ public class Board extends JFrame implements ActionListener {
     JPanel middlePanel = new JPanel();
     JButton exitGame = new JButton();
     JButton restartGame = new JButton();
+    static JButton bKing = new JButton();
+    static JButton whKing = new JButton();
     static JButton[][] squares = new JButton[8][8];
     static List<JButton> availableTiles = new ArrayList<>();
     static List<JButton> availableEnemyTiles = new ArrayList<>();
@@ -24,11 +27,17 @@ public class Board extends JFrame implements ActionListener {
     String movingPiece;
     String originalLocation;
     Boolean pieceSelected = false;
-    Boolean whiteTurn = true;
-    Boolean blackTurn = false;
+    static Boolean whiteTurn = true;
+    static Boolean blackTurn = false;
+    static Boolean whiteCheck = false;
+    static Boolean blackCheck = false;
     Boolean teamMoved = false;
 
     public Board(){
+        whiteTurn = true;
+        blackTurn = false;
+        whiteCheck = false;
+        blackCheck = false;
         this.form.setLayout(null);
         this.setLocations();
         this.setText();
@@ -84,6 +93,8 @@ public class Board extends JFrame implements ActionListener {
                 this.add(squares[i][j]);
             }
         }
+        bKing = squares[4][0];
+        whKing = squares[3][7];
         this.add(this.middlePanel);
         this.add(this.form);
         this.setVisible(true);
@@ -230,6 +241,7 @@ public class Board extends JFrame implements ActionListener {
             // Convert to matrix location
             int yO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
             int xO = originalLocation.charAt(1)-65;
+            PieceMovement.checkKing();
             PieceMovement.determinePossibleMoves(movingPiece, yO, xO);
             currentTile = squares[xO][yO];
             currentTile.setBorder(BorderFactory.createMatteBorder(3,3,3,3,Color.blue));
@@ -244,23 +256,85 @@ public class Board extends JFrame implements ActionListener {
 
             // Clear action command to just contain location and no image
             squares[xO][yO].setActionCommand(originalLocation);
-            squares[xO][yO].setIcon(null);
+
 
             // Get Chess Board location from button
             String[] arrOfStr = str.split(",");
-            originalLocation = arrOfStr[0];
+            String newLocation = arrOfStr[0];
 
             // Set new button to contain chess piece and location
-            squares[xN][yN].setActionCommand(originalLocation+','+movingPiece);
-            addIconToButton(s+movingPiece+".png", squares[xN][yN]);
+            squares[xN][yN].setActionCommand(newLocation+','+movingPiece);
+            System.out.println(movingPiece);
+            if(whiteTurn) {
+                // Check if white piece can freely move
+                if (whiteCheck) {
+                    PieceMovement.checkKing();
+                    if (!whiteCheck) {
+                        // Keep track of king
+                        if (movingPiece.contains("King")) {
+                            whKing = squares[xN][yN];
+
+                        }
+                        // Confirm piece move
+                        squares[xO][yO].setIcon(null);
+                        addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
+                        blackTurn = !blackTurn;
+                        whiteTurn = !whiteTurn;
+                    } else {
+                        // Undo piece move as king in check
+                        squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
+                        squares[xN][yN].setActionCommand(newLocation);
+                    }
+                } else {
+                    // Keep track of king
+                    if (movingPiece.contains("King")) {
+                        whKing = squares[xN][yN];
+                    }
+                    // Confirm piece move
+                    squares[xO][yO].setIcon(null);
+                    addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
+                    blackTurn = !blackTurn;
+                    whiteTurn = !whiteTurn;
+                }
+            }
+            else if(blackTurn) {
+                // Check if black piece can freely move
+                if ( blackCheck) {
+                    PieceMovement.checkKing();
+                    if (!blackCheck) {
+                        // Keep track of king
+                        if (movingPiece.contains("King")) {
+                            bKing = squares[xN][yN];
+                        }
+                        // Confirm piece move
+                        squares[xO][yO].setIcon(null);
+                        addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
+                        blackTurn = !blackTurn;
+                        whiteTurn = !whiteTurn;
+                    } else {
+                        // Undo piece move as king in check
+                        squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
+                        squares[xN][yN].setActionCommand(newLocation);
+                    }
+                } else {
+                    // Keep track of king
+                    if (movingPiece.contains("King")) {
+                        bKing = squares[xN][yN];
+                    }
+                    // Confirm piece move
+                    squares[xO][yO].setIcon(null);
+                    addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
+                    blackTurn = !blackTurn;
+                    whiteTurn = !whiteTurn;
+                }
+            }
 
             // Reset buffer and condition variables
             originalLocation = "";
             movingPiece = "";
             pieceSelected = false;
             teamMoved = false;
-            blackTurn = !blackTurn;
-            whiteTurn = !whiteTurn;
+            PieceMovement.checkKing();
             HighlightTiles.highlightSquareEmpty(availableTiles, availableEnemyTiles);
         }
         // add reset buffers if no new piece selected

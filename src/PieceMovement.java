@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.*;
+
 public class PieceMovement extends Board{
 
     public static void determinePossibleMoves(String chessPieceOrig, int y, int x)
@@ -200,6 +203,7 @@ public class PieceMovement extends Board{
         }
     }
 
+    // Determine if given space is available for knight
     public static void knightMovement(int x, int y, String enemy, String ally)
     {
         if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
@@ -214,6 +218,7 @@ public class PieceMovement extends Board{
         availableTiles.add(squares[x][y]);
     }
 
+    // Recursively find next diagonal movement available
     public static void diagonalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
     {
         if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
@@ -250,6 +255,7 @@ public class PieceMovement extends Board{
         }
     }
 
+    // Recursively find next vertical and/or horizontal movement available
     public static void verticalHorizontalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
     {
         if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
@@ -288,5 +294,139 @@ public class PieceMovement extends Board{
                 verticalHorizontalMovement(x-1, y, dir, enemy, ally, false);
             }
         }
+    }
+
+    // Checks for enemy bishops, queens, and rooks in check spots
+    public static void checkSpaces(int x, int y, int dir, String enemy, String ally)
+    {
+        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
+        {
+            return;
+        }
+        if( squares[x][y].getActionCommand().contains(enemy))
+        {
+            if(ally.equals("b"))
+            {
+                blackCheck = true;
+                bKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            }
+            else
+            {
+                whiteCheck = true;
+                whKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            }
+            return;
+        }
+        switch (dir) {
+            case 1 -> checkSpaces(x, y+1, dir, enemy, ally);
+            case 2 -> checkSpaces(x, y-1, dir, enemy, ally);
+            case 3 -> checkSpaces(x+1, y, dir, enemy, ally);
+            case 4 -> checkSpaces(x-1, y, dir, enemy, ally);
+            case 5 -> checkSpaces(x+1, y+1, dir, enemy, ally);
+            case 6 -> checkSpaces(x-1, y-1, dir, enemy, ally);
+            case 7 -> checkSpaces(x+1, y-1, dir, enemy, ally);
+            case 8 -> checkSpaces(x-1, y+1, dir, enemy, ally);
+        }
+    }
+
+    // Checks for enemy knights in check spots
+    public static void checkForKnight(int x, int y, String enemy, String ally)
+    {
+        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
+        {
+            return;
+        }
+        if( squares[x][y].getActionCommand().contains(enemy))
+        {
+            if(ally.equals("b"))
+            {
+                blackCheck = true;
+                bKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            }
+            else
+            {
+                whiteCheck = true;
+                whKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            }
+        }
+    }
+
+    public static void checkKing()
+    {
+        String blackLocation, whiteLocation;
+        whiteLocation = whKing.getActionCommand().substring(0,2);
+        blackLocation = bKing.getActionCommand().substring(0,2);
+
+        int yOwh = (Character.getNumericValue(whiteLocation.charAt(0))-8)*-1;
+        int xOwh = whiteLocation.charAt(1)-65;
+        int yOb = (Character.getNumericValue(blackLocation.charAt(0))-8)*-1;
+        int xOb = blackLocation.charAt(1)-65;
+
+        // Check for pawn
+        if(xOb < 7 && yOb < 7 && (squares[xOb+1][yOb+1].getActionCommand().contains("whPawn") ))
+        {
+            bKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            blackCheck = true;
+        }
+        else if(xOb > 0 && yOb < 7 && squares[xOb-1][yOb+1].getActionCommand().contains("whPawn"))
+        {
+            bKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            blackCheck = true;
+        }
+        else
+        {
+            bKing.setBorder(UIManager.getBorder("Button.border"));
+            blackCheck = false;
+        }
+
+        checkForKnight(xOb+2, yOb+1, "wh", "b");
+        checkForKnight(xOb+2, yOb-1, "wh", "b");
+        checkForKnight(xOb-2, yOb+1, "wh", "b");
+        checkForKnight(xOb-2, yOb-1, "wh", "b");
+        checkForKnight(xOb+1, yOb+2, "wh", "b");
+        checkForKnight(xOb+1, yOb-2, "wh", "b");
+        checkForKnight(xOb-1, yOb+2, "wh", "b");
+        checkForKnight(xOb-1, yOb-2, "wh", "b");
+        checkSpaces(xOb, yOb+1, 1, "wh", "b");
+        checkSpaces(xOb, yOb-1, 2, "wh", "b");
+        checkSpaces(xOb+1, yOb, 3, "wh", "b");
+        checkSpaces(xOb-1, yOb, 4, "wh", "b");
+        checkSpaces(xOb+1, yOb+1, 5, "wh", "b");
+        checkSpaces(xOb-1, yOb-1, 6, "wh", "b");
+        checkSpaces(xOb+1, yOb-1, 7, "wh", "b");
+        checkSpaces(xOb-1, yOb+1, 8, "wh", "b");
+
+        // Check for pawn
+        if(xOwh < 7 && yOwh > 0 && squares[xOwh+1][yOwh-1].getActionCommand().contains("bPawn") )
+        {
+            whKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            whiteCheck = true;
+        }
+        else if( xOwh > 0 && yOwh > 0 && squares[xOwh-1][yOwh-1].getActionCommand().contains("bPawn"))
+        {
+            whKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            whiteCheck = true;
+        }
+        else
+        {
+            whKing.setBorder(UIManager.getBorder("Button.border"));
+            whiteCheck = false;
+        }
+        checkForKnight(xOwh+2, yOwh+1, "b", "wh");
+        checkForKnight(xOwh+2, yOwh-1, "b", "wh");
+        checkForKnight(xOwh-2, yOwh+1, "b", "wh");
+        checkForKnight(xOwh-2, yOwh-1, "b", "wh");
+        checkForKnight(xOwh+1, yOwh+2, "b", "wh");
+        checkForKnight(xOwh+1, yOwh-2, "b", "wh");
+        checkForKnight(xOwh-1, yOwh+2, "b", "wh");
+        checkForKnight(xOwh-1, yOwh-2, "b", "wh");
+        checkSpaces(xOwh, yOwh+1, 1, "b", "wh");
+        checkSpaces(xOwh, yOwh-1, 2, "b", "wh");
+        checkSpaces(xOwh+1, yOwh, 3, "b", "wh");
+        checkSpaces(xOwh-1, yOwh, 4, "b", "wh");
+        checkSpaces(xOwh+1, yOwh+1, 5, "b", "wh");
+        checkSpaces(xOwh-1, yOwh-1, 6, "b", "wh");
+        checkSpaces(xOwh+1, yOwh-1, 7, "b", "wh");
+        checkSpaces(xOwh-1, yOwh+1, 8, "b", "wh");
     }
 }
