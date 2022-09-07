@@ -264,27 +264,28 @@ public class Board extends JFrame implements ActionListener {
 
             // Set new button to contain chess piece and location
             squares[xN][yN].setActionCommand(newLocation+','+movingPiece);
-            System.out.println(movingPiece);
+
+            // If moving king, update global king variable
+            if (movingPiece.contains("King") && whiteTurn) {
+                whKing = squares[xN][yN];
+            }
+
+            // If moving king, update global king variable
+            if (movingPiece.contains("King") && blackTurn) {
+                bKing = squares[xN][yN];
+            }
+
+            PieceMovement.checkKing();
             if(whiteTurn) {
                 // Check if white piece can freely move
                 if (whiteCheck) {
-                    PieceMovement.checkKing();
-                    if (!whiteCheck) {
-                        // Keep track of king
-                        if (movingPiece.contains("King")) {
-                            whKing = squares[xN][yN];
-
-                        }
-                        // Confirm piece move
-                        squares[xO][yO].setIcon(null);
-                        addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
-                        blackTurn = !blackTurn;
-                        whiteTurn = !whiteTurn;
-                    } else {
-                        // Undo piece move as king in check
-                        squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
-                        squares[xN][yN].setActionCommand(newLocation);
+                    // Undo piece move as king in check
+                    if (movingPiece.contains("King")) {
+                        whKing = squares[xO][yO];
                     }
+                    squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
+                    squares[xN][yN].setActionCommand(newLocation);
+                    PieceMovement.checkKing();
                 } else {
                     // Keep track of king
                     if (movingPiece.contains("King")) {
@@ -300,22 +301,13 @@ public class Board extends JFrame implements ActionListener {
             else if(blackTurn) {
                 // Check if black piece can freely move
                 if ( blackCheck) {
-                    PieceMovement.checkKing();
-                    if (!blackCheck) {
-                        // Keep track of king
-                        if (movingPiece.contains("King")) {
-                            bKing = squares[xN][yN];
-                        }
-                        // Confirm piece move
-                        squares[xO][yO].setIcon(null);
-                        addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
-                        blackTurn = !blackTurn;
-                        whiteTurn = !whiteTurn;
-                    } else {
-                        // Undo piece move as king in check
-                        squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
-                        squares[xN][yN].setActionCommand(newLocation);
+                    // Undo piece move as king in check
+                    if (movingPiece.contains("King")) {
+                        bKing = squares[xO][yO];
                     }
+                    squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
+                    squares[xN][yN].setActionCommand(newLocation);
+                    PieceMovement.checkKing();
                 } else {
                     // Keep track of king
                     if (movingPiece.contains("King")) {

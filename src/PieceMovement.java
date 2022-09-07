@@ -303,7 +303,7 @@ public class PieceMovement extends Board{
         {
             return;
         }
-        if( squares[x][y].getActionCommand().contains(enemy))
+        if( squares[x][y].getActionCommand().contains(enemy) && ((dir < 4 && squares[x][y].getActionCommand().contains("Rook")) || (dir > 4 && squares[x][y].getActionCommand().contains("Bishop")) || squares[x][y].getActionCommand().contains("Queen")))
         {
             if(ally.equals("b"))
             {
@@ -336,7 +336,7 @@ public class PieceMovement extends Board{
         {
             return;
         }
-        if( squares[x][y].getActionCommand().contains(enemy))
+        if( squares[x][y].getActionCommand().contains(enemy) && squares[x][y].getActionCommand().contains("Knight"))
         {
             if(ally.equals("b"))
             {
