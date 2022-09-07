@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -16,6 +15,7 @@ public class Board extends JFrame implements ActionListener {
     JPanel form = new JPanel();
     JPanel middlePanel = new JPanel();
     JButton exitGame = new JButton();
+    JButton concede = new JButton();
     JButton restartGame = new JButton();
     static JButton bKing = new JButton();
     static JButton whKing = new JButton();
@@ -94,7 +94,7 @@ public class Board extends JFrame implements ActionListener {
             }
         }
         bKing = squares[4][0];
-        whKing = squares[3][7];
+        whKing = squares[4][7];
         this.add(this.middlePanel);
         this.add(this.form);
         this.setVisible(true);
@@ -106,19 +106,23 @@ public class Board extends JFrame implements ActionListener {
         this.middlePanel.setBounds(0,0,385,340);
         this.exitGame.setBounds(260,345,120,30);
         this.restartGame.setBounds(10,345,120,30);
+        this.concede.setBounds(140,345,110,30);
     }
 
     private void setText(){
         this.setTitle("Chess Game");
         this.exitGame.setText("Exit Game");
         this.restartGame.setText("Restart Game");
+        this.concede.setText("Concede");
     }
 
     private void addComponents(){
         this.add(exitGame);
         this.add(restartGame);
+        this.add(concede);
         exitGame.addActionListener(this);
         restartGame.addActionListener(this);
+        concede.addActionListener(this);
     }
 
     // Adds Piece name, Piece Picture location, and Chess Board location to button
@@ -186,12 +190,12 @@ public class Board extends JFrame implements ActionListener {
             str = s+"whBishop.png";
             tempSquare.setActionCommand(tileLocation+"whBishop");
         }
-        if(j == 7 && i == 3)
+        if(j == 7 && i == 4)
         {
             str = s+"whKing.png";
             tempSquare.setActionCommand(tileLocation+"whKing");
         }
-        if(j == 7 && i == 4)
+        if(j == 7 && i == 3)
         {
             str = s+"whQueen.png";
             tempSquare.setActionCommand(tileLocation+"whQueen");
@@ -227,6 +231,10 @@ public class Board extends JFrame implements ActionListener {
             this.setVisible(false);
             b.setVisible(true);
             return;
+        }
+        if( str.equals("Concede"))
+        {
+            endGame();
         }
 
         // Select original piece
@@ -337,6 +345,34 @@ public class Board extends JFrame implements ActionListener {
             pieceSelected = false;
             teamMoved = false;
             HighlightTiles.highlightSquareEmpty(availableTiles, availableEnemyTiles);
+        }
+    }
+    public void endGame()
+    {
+        Object[] options = { "OK", "CANCEL" };
+        Object result = null;
+        if(blackTurn)
+        {
+            // Create dialog message allowing user to decide to restart game or continue
+            result = JOptionPane.showOptionDialog(null, "White has won! Press OK to restart!", "Checkmate",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                    null, options, options[0]);
+        }
+        if(whiteTurn)
+        {
+            // Create dialog message allowing user to decide to restart game or continue
+            result = JOptionPane.showOptionDialog(null, "Black has won! Press OK to restart!", "Checkmate",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                    null, options, options[0]);
+        }
+
+        // If user selects OK restart game
+        if( result != null && (int)result == 0)
+        {
+            Board b = new Board();
+            this.setVisible(false);
+            b.setVisible(true);
+
         }
     }
 }
