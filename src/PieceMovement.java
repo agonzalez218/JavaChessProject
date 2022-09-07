@@ -299,7 +299,11 @@ public class PieceMovement extends Board{
     // Checks for enemy bishops, queens, and rooks in check spots
     public static void checkSpaces(int x, int y, int dir, String enemy, String ally)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally) )
+        {
+            return;
+        }
+        if( squares[x][y].getActionCommand().contains(enemy) && !((dir < 4 && squares[x][y].getActionCommand().contains("Rook")) || (dir > 4 && squares[x][y].getActionCommand().contains("Bishop")) || squares[x][y].getActionCommand().contains("Queen")))
         {
             return;
         }
