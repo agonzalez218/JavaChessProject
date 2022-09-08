@@ -118,7 +118,7 @@ public class Board extends JFrame implements ActionListener {
     }
 
     private void setLocations(){
-        this.setSize(400,450);
+        this.setSize(400,445);
         this.middlePanel.setBorder(new TitledBorder(new EtchedBorder(), ""));
         this.middlePanel.setBounds(0,0,385,340);
         this.exitGame.setBounds(260,345,120,30);
