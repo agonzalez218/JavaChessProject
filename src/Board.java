@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -23,22 +24,14 @@ public class Board extends JFrame implements ActionListener {
     JButton concede = new JButton();
     JButton restartGame = new JButton();
     ButtonGroup group = new ButtonGroup();
-    static JButton bKing = new JButton();
-    static JButton whKing = new JButton();
+    static JButton bKing = new JButton(), whKing = new JButton();
     static JButton[][] chessBoard = new JButton[8][8];
-    static List<JButton> availableTiles = new ArrayList<>();
-    static List<JButton> availableEnemyTiles = new ArrayList<>();
+    static List<JButton> availableTiles = new ArrayList<>(), availableEnemyTiles = new ArrayList<>();
     static JButton currentTile = new JButton();
     static String s = "src\\ChessPieces\\";
-    static String movingPiece;
-    static String tempPiece;
-    static String originalLocation;
-    static Boolean pieceSelected = false;
-    static Boolean whiteTurn = true;
-    static Boolean blackTurn = false;
-    static Boolean whiteCheck = false;
-    static Boolean blackCheck = false;
-    static Boolean teamMoved = false;
+    static String movingPiece, tempPiece, originalLocation;
+    static Boolean pieceSelected = false, whiteTurn = true, blackTurn = false;
+    static Boolean whiteCheck = false, blackCheck = false, teamMoved = false;
 
     public Board( ){
         whiteTurn = true;
@@ -129,16 +122,21 @@ public class Board extends JFrame implements ActionListener {
     private void setText(){
         this.setTitle("Chess Game");
         this.exitGame.setText("Exit Game");
+        exitGame.setMnemonic(KeyEvent.VK_E);
         this.restartGame.setText("Restart Game");
+        restartGame.setMnemonic(KeyEvent.VK_R);
         this.concede.setText("Concede");
+        concede.setMnemonic(KeyEvent.VK_C);
     }
 
     public void createMenu(){
-        menu.setMnemonic(KeyEvent.VK_C);
+        menu.setMnemonic(KeyEvent.VK_H);
         menuBar.add(menu);
 
         rbMenuItem = new JRadioButtonMenuItem("Default Board (Light Gray/White)");
         rbMenuItem.setMnemonic(KeyEvent.VK_D);
+        rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_D, InputEvent.ALT_MASK));
         rbMenuItem.addActionListener(this);
         if( HighlightTiles.getOption() == 68)
         {
@@ -150,6 +148,8 @@ public class Board extends JFrame implements ActionListener {
 
         rbMenuItem = new JRadioButtonMenuItem("Tan Brown/Dark Brown");
         rbMenuItem.setMnemonic(KeyEvent.VK_T);
+        rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_T, InputEvent.ALT_MASK));
         rbMenuItem.addActionListener(this);
         if( HighlightTiles.getOption() == 84)
         {
