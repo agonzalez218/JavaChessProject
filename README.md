@@ -5,7 +5,8 @@ This project is my own game of Chess made in Java. This project was done to test
 [Game Rules](#game-rules)<br/>
 [Chess Piece Rules](#chess-piece-rules)<br/>
 [Tile Highlight Colors](#tile-highlight-colors)<br/>
-[Demo Rules](#demo-images)<br/>
+[Chess Board Options](#chess-board-options)<br/>
+[Demo Images](#demo-images)<br/>
 
 
 ## Game Rules
@@ -41,6 +42,9 @@ Individual Piece Moves:<br/>
 - Yellow:
   - Shows the current selected Chess Piece's available moves
 
+## Chess Board Options
+- Default Light Grey / White
+- Tan Brown / Dark Brown
 
 ## Demo Images
 The following image is the main playing screen<br/>
@@ -58,3 +62,11 @@ In this scenario, the Pawn will not be allowed to take the piece however, as the
 
 The following image is the result of pressing the concede button:<br/>
 ![Concede](https://user-images.githubusercontent.com/60588691/188952941-6f633640-c5c5-44ae-928e-83d56ba10c29.png)
+
+The following image is the menu option that allows user to change Chess Board Color:<br/>
+The board maintains this color while the game window is open, even if reset or during gameplay.<br/>
+![MenuOption](https://user-images.githubusercontent.com/60588691/189186643-ec52a0f3-0fa2-4253-b62b-432374673209.png)
+
+The following image is the second option of the Chess Board (<a href="#chess-board-options"> link to Chess Board Options </a> ):<br/>
+![SecondChessBoardColorOption](https://user-images.githubusercontent.com/60588691/189186844-33129b33-2c25-44cf-a124-76a78a8f8ff6.png)
+
