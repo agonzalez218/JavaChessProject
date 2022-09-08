@@ -6,6 +6,7 @@ This project is my own game of Chess made in Java. This project was done to test
 [Chess Piece Rules](#chess-piece-rules)<br/>
 [Tile Highlight Colors](#tile-highlight-colors)<br/>
 [Chess Board Options](#chess-board-options)<br/>
+[Key Mnemonics](#key-mnemonics)<br/>
 [Demo Images](#demo-images)<br/>
 
 
@@ -46,6 +47,18 @@ Individual Piece Moves:<br/>
 - Default Light Grey / White
 - Tan Brown / Dark Brown
 
+## Key Mnemonics
+- ALT + C
+  - Concede
+- ALT + D
+  - Default Chess Board Color
+- ALT + E
+  - Exit Game
+- ALT + R
+  - Restart Game
+- ALT + T
+  - Tan Brown / Dark Brown Chess Board Color
+
 ## Demo Images
 The following image is the main playing screen<br/>
 ![MainMenu](https://user-images.githubusercontent.com/60588691/188952400-ca1dc875-1b9f-43c1-aa19-0bf0c45b3548.png)
@@ -70,3 +83,5 @@ The board maintains this color while the game window is open, even if reset or d
 The following image is the second option of the Chess Board (<a href="#chess-board-options"> link to Chess Board Options </a> ):<br/>
 ![SecondChessBoardColorOption](https://user-images.githubusercontent.com/60588691/189186844-33129b33-2c25-44cf-a124-76a78a8f8ff6.png)
 
+The following gif is the result of using Mnemonics of the Menu options to switch between board colors (<a href="#key-mnemonics"> link to Key Mnemonics </a> ):<br/>
+![BoardColorChange](https://user-images.githubusercontent.com/60588691/189195210-cc281e16-62fa-4262-9dd2-585e71991bf3.gif)
