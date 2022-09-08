@@ -54,6 +54,8 @@ Individual Piece Moves:<br/>
   - Default Chess Board Color
 - ALT + E
   - Exit Game
+ - ALT + H
+  - Chess Board Options
 - ALT + R
   - Restart Game
 - ALT + T
