@@ -1,30 +1,37 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 public class Board extends JFrame implements ActionListener {
+    JMenuBar menuBar = new JMenuBar();
+    JMenu menu = new JMenu("Chess Board Options");
+    JRadioButtonMenuItem rbMenuItem;
     JPanel form = new JPanel();
     JPanel middlePanel = new JPanel();
     JButton exitGame = new JButton();
     JButton concede = new JButton();
     JButton restartGame = new JButton();
+    ButtonGroup group = new ButtonGroup();
     static JButton bKing = new JButton();
     static JButton whKing = new JButton();
-    static JButton[][] squares = new JButton[8][8];
+    static JButton[][] chessBoard = new JButton[8][8];
     static List<JButton> availableTiles = new ArrayList<>();
     static List<JButton> availableEnemyTiles = new ArrayList<>();
     static JButton currentTile = new JButton();
     static String s = "src\\ChessPieces\\";
     static String movingPiece;
+    static String tempPiece;
     static String originalLocation;
     static Boolean pieceSelected = false;
     static Boolean whiteTurn = true;
@@ -33,16 +40,19 @@ public class Board extends JFrame implements ActionListener {
     static Boolean blackCheck = false;
     static Boolean teamMoved = false;
 
-    public Board(){
+    public Board( ){
         whiteTurn = true;
         blackTurn = false;
         whiteCheck = false;
         blackCheck = false;
+
         this.form.setLayout(null);
         this.setLocations();
         this.setText();
+        this.createMenu();
         this.addComponents();
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
         int i, j;
         String str = "";
         for(i=0; i<8;i++)
@@ -57,11 +67,17 @@ public class Board extends JFrame implements ActionListener {
                 // Adds Checkerboard pattern to board
                 if( i % 2 == 0 && j % 2 == 1 || i % 2 == 1 && j % 2 == 0)
                 {
-                    tempSquare.setBackground(Color.lightGray);
+                    switch (HighlightTiles.getOption()) {
+                        case 68 -> tempSquare.setBackground(Color.lightGray);
+                        case 84 -> tempSquare.setBackground(new Color(111, 78, 55));
+                    }
                 }
                 else
                 {
-                    tempSquare.setBackground(Color.white);
+                    switch (HighlightTiles.getOption()) {
+                        case 68 -> tempSquare.setBackground(Color.white);
+                        case 84 -> tempSquare.setBackground(new Color(245, 222, 179));
+                    }
                 }
 
                 // If tile is in first two rows, pieces all start black
@@ -89,12 +105,12 @@ public class Board extends JFrame implements ActionListener {
                     addIconToButton(str, tempSquare);
                 }
                 tempSquare.addActionListener(this);
-                squares[i][j] = tempSquare;
-                this.add(squares[i][j]);
+                chessBoard[i][j] = tempSquare;
+                this.add(chessBoard[i][j]);
             }
         }
-        bKing = squares[4][0];
-        whKing = squares[4][7];
+        bKing = chessBoard[4][0];
+        whKing = chessBoard[4][7];
         this.add(this.middlePanel);
         this.add(this.form);
         this.setLocationRelativeTo(null);
@@ -102,7 +118,7 @@ public class Board extends JFrame implements ActionListener {
     }
 
     private void setLocations(){
-        this.setSize(400,420);
+        this.setSize(400,450);
         this.middlePanel.setBorder(new TitledBorder(new EtchedBorder(), ""));
         this.middlePanel.setBounds(0,0,385,340);
         this.exitGame.setBounds(260,345,120,30);
@@ -117,6 +133,32 @@ public class Board extends JFrame implements ActionListener {
         this.concede.setText("Concede");
     }
 
+    public void createMenu(){
+        menu.setMnemonic(KeyEvent.VK_C);
+        menuBar.add(menu);
+
+        rbMenuItem = new JRadioButtonMenuItem("Default Board (Light Gray/White)");
+        rbMenuItem.setMnemonic(KeyEvent.VK_D);
+        rbMenuItem.addActionListener(this);
+        if( HighlightTiles.getOption() == 68)
+        {
+            rbMenuItem.setSelected(true);
+        }
+
+        group.add(rbMenuItem);
+        menu.add(rbMenuItem);
+
+        rbMenuItem = new JRadioButtonMenuItem("Tan Brown/Dark Brown");
+        rbMenuItem.setMnemonic(KeyEvent.VK_T);
+        rbMenuItem.addActionListener(this);
+        if( HighlightTiles.getOption() == 84)
+        {
+            rbMenuItem.setSelected(true);
+        }
+        group.add(rbMenuItem);
+        menu.add(rbMenuItem);
+    }
+
     private void addComponents(){
         this.add(exitGame);
         this.add(restartGame);
@@ -124,6 +166,7 @@ public class Board extends JFrame implements ActionListener {
         exitGame.addActionListener(this);
         restartGame.addActionListener(this);
         concede.addActionListener(this);
+        this.setJMenuBar(menuBar);
     }
 
     // Adds Piece name, Piece Picture location, and Chess Board location to button
@@ -258,7 +301,7 @@ public class Board extends JFrame implements ActionListener {
         int xO = originalLocation.charAt(1)-65;
         PieceMovement.checkKing();
         PieceMovement.determinePossibleMoves(movingPiece, yO, xO);
-        currentTile = squares[xO][yO];
+        currentTile = chessBoard[xO][yO];
         currentTile.setBorder(BorderFactory.createMatteBorder(3,3,3,3,Color.blue));
     }
 
@@ -268,24 +311,28 @@ public class Board extends JFrame implements ActionListener {
         int xO = originalLocation.charAt(1)-65;
 
         // Clear action command to just contain location and no image
-        squares[xO][yO].setActionCommand(originalLocation);
-
+        chessBoard[xO][yO].setActionCommand(originalLocation);
 
         // Get Chess Board location from button
         String[] arrOfStr = chessPiece.split(",");
         String newLocation = arrOfStr[0];
 
+        if(chessBoard[xN][yN].getActionCommand().length() > 2)
+        {
+            tempPiece = chessBoard[xN][yN].getActionCommand().substring(2);
+        }
+
         // Set new button to contain chess piece and location
-        squares[xN][yN].setActionCommand(newLocation+','+movingPiece);
+        chessBoard[xN][yN].setActionCommand(newLocation+','+movingPiece);
 
         // If moving king, update global king variable
         if (movingPiece.contains("King") && whiteTurn) {
-            whKing = squares[xN][yN];
+            whKing = chessBoard[xN][yN];
         }
 
         // If moving king, update global king variable
         if (movingPiece.contains("King") && blackTurn) {
-            bKing = squares[xN][yN];
+            bKing = chessBoard[xN][yN];
         }
 
         PieceMovement.checkKing();
@@ -294,19 +341,26 @@ public class Board extends JFrame implements ActionListener {
             if (whiteCheck) {
                 // Undo piece move as king in check
                 if (movingPiece.contains("King")) {
-                    whKing = squares[xO][yO];
+                    whKing = chessBoard[xO][yO];
                 }
-                squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
-                squares[xN][yN].setActionCommand(newLocation);
+                chessBoard[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
+                if(!Objects.equals(tempPiece, ""))
+                {
+                    chessBoard[xN][yN].setActionCommand(newLocation+','+tempPiece);
+                }
+                else
+                {
+                    chessBoard[xN][yN].setActionCommand(newLocation);
+                }
                 PieceMovement.checkKing();
             } else {
                 // Keep track of king
                 if (movingPiece.contains("King")) {
-                    whKing = squares[xN][yN];
+                    whKing = chessBoard[xN][yN];
                 }
                 // Confirm piece move
-                squares[xO][yO].setIcon(null);
-                addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
+                chessBoard[xO][yO].setIcon(null);
+                addIconToButton(s + movingPiece + ".png", chessBoard[xN][yN]);
                 blackTurn = !blackTurn;
                 whiteTurn = !whiteTurn;
             }
@@ -316,25 +370,33 @@ public class Board extends JFrame implements ActionListener {
             if ( blackCheck) {
                 // Undo piece move as king in check
                 if (movingPiece.contains("King")) {
-                    bKing = squares[xO][yO];
+                    bKing = chessBoard[xO][yO];
                 }
-                squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
-                squares[xN][yN].setActionCommand(newLocation);
+                chessBoard[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
+                if(!Objects.equals(tempPiece, ""))
+                {
+                    chessBoard[xN][yN].setActionCommand(newLocation+tempPiece);
+                }
+                else
+                {
+                    chessBoard[xN][yN].setActionCommand(newLocation);
+                }
                 PieceMovement.checkKing();
             } else {
                 // Keep track of king
                 if (movingPiece.contains("King")) {
-                    bKing = squares[xN][yN];
+                    bKing = chessBoard[xN][yN];
                 }
                 // Confirm piece move
-                squares[xO][yO].setIcon(null);
-                addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
+                chessBoard[xO][yO].setIcon(null);
+                addIconToButton(s + movingPiece + ".png", chessBoard[xN][yN]);
                 blackTurn = !blackTurn;
                 whiteTurn = !whiteTurn;
             }
         }
 
         // Reset buffer and condition variables
+        tempPiece = "";
         originalLocation = "";
         movingPiece = "";
         pieceSelected = false;
@@ -346,8 +408,20 @@ public class Board extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         String str = ae.getActionCommand();
         // Convert current (new) tile to matrix location
+        System.out.println(str);
         int yN = (Character.getNumericValue(str.charAt(0))-8)*-1;
         int xN = str.charAt(1)-65;
+
+        if( str.equals("Default Board (Light Gray/White)"))
+        {
+            HighlightTiles.setOption(68);
+            HighlightTiles.changeChessBoardBackground();
+        }
+        if( str.equals("Tan Brown/Dark Brown"))
+        {
+            HighlightTiles.setOption(84);
+            HighlightTiles.changeChessBoardBackground();
+        }
 
         if( str.equals("Exit Game"))
         {
@@ -372,11 +446,11 @@ public class Board extends JFrame implements ActionListener {
         }
 
         // Move piece
-        else if( teamMoved && pieceSelected && (availableTiles.contains(squares[xN][yN]) || availableEnemyTiles.contains(squares[xN][yN])))
+        else if( teamMoved && pieceSelected && (availableTiles.contains(chessBoard[xN][yN]) || availableEnemyTiles.contains(chessBoard[xN][yN])))
         {
             // Convert to matrix location
             movePiece(str, xN, yN);
-            //ChessAI.moveAIPiece();
+            ChessAI.moveAIPiece();
         }
         // add reset buffers if no new piece selected
         else

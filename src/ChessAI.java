@@ -1,8 +1,13 @@
+import javax.swing.*;
+
 public class ChessAI extends Board{
 
+    static JButton[][] tempChessBoard = new JButton[8][8];
+
     public static String chooseAIPiece(){
-        String originalPiece = null;
-        originalPiece = squares[1][1].getActionCommand();
+
+        String originalPiece;
+        originalPiece = chessBoard[1][1].getActionCommand();
         return originalPiece;
     }
 
@@ -27,11 +32,12 @@ public class ChessAI extends Board{
             {
                 savePiece(movingPiece);
                 int[] newPieceLocation = chooseAIPieceLocation();
+                String newLocation = ((-1*newPieceLocation[1])+8) + String.valueOf((char)(newPieceLocation[0]+65));
                 // Move piece
-                if( teamMoved && pieceSelected && (availableTiles.contains(squares[newPieceLocation[0]][newPieceLocation[1]]) || availableEnemyTiles.contains(squares[newPieceLocation[0]][newPieceLocation[1]])))
+                if( teamMoved && pieceSelected && (availableTiles.contains(chessBoard[newPieceLocation[0]][newPieceLocation[1]]) || availableEnemyTiles.contains(chessBoard[newPieceLocation[0]][newPieceLocation[1]])))
                 {
                     // Convert to matrix location
-                    movePiece(movingPiece, newPieceLocation[0], newPieceLocation[1]);
+                    movePiece(newLocation, newPieceLocation[0], newPieceLocation[1]);
                 }
             }
         }

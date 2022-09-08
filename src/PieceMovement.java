@@ -141,60 +141,60 @@ public class PieceMovement extends Board{
             case "Pawn":
                 if(teamColor.equals("b")) {
                     // If end of board, or enemy/ally no more movement allowed
-                    if( y < 7 && !(squares[x][y+1].getActionCommand().contains("b")) && !(squares[x][y+1].getActionCommand().contains("wh")))
+                    if( y < 7 && !(chessBoard[x][y+1].getActionCommand().contains("b")) && !(chessBoard[x][y+1].getActionCommand().contains("wh")))
                     {
                         // First move can be two tiles up
-                        if (y == 1) {
-                            availableTiles.add(squares[x][y + 2]);
+                        if (y == 1 && !(chessBoard[x][y+2].getActionCommand().contains("wh"))) {
+                            availableTiles.add(chessBoard[x][y + 2]);
                         }
-                        availableTiles.add(squares[x][y + 1]);
+                        availableTiles.add(chessBoard[x][y + 1]);
                         HighlightTiles.highlightSquare(availableTiles);
                     }
                     // If there is an enemy tile to the right
                     if( x < 7 && y < 7 )
                     {
-                        if( squares[x+1][y+1].getActionCommand().contains("wh"))
+                        if( chessBoard[x+1][y+1].getActionCommand().contains("wh"))
                         {
-                            availableEnemyTiles.add(squares[x+1][y+1]);
+                            availableEnemyTiles.add(chessBoard[x+1][y+1]);
                             HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
                         }
                     }
                     // If there is an enemy tile to the left
                     if( x > 0 && y < 7 )
                     {
-                        if( squares[x-1][y+1].getActionCommand().contains("wh"))
+                        if( chessBoard[x-1][y+1].getActionCommand().contains("wh"))
                         {
-                            availableEnemyTiles.add(squares[x-1][y+1]);
+                            availableEnemyTiles.add(chessBoard[x-1][y+1]);
                             HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
                         }
                     }
                 }
                 else if(teamColor.equals("wh")) {
                     // If end of board, or enemy/ally no more movement allowed
-                    if( y > 0 && !(squares[x][y-1].getActionCommand().contains("b")) && !(squares[x][y-1].getActionCommand().contains("wh")))
+                    if( y > 0 && !(chessBoard[x][y-1].getActionCommand().contains("b")) && !(chessBoard[x][y-1].getActionCommand().contains("wh")))
                     {
                         // First move can be two tiles up
-                        if (y == 6) {
-                            availableTiles.add(squares[x][y - 2]);
+                        if (y == 6 && !(chessBoard[x][y-2].getActionCommand().contains("b"))) {
+                            availableTiles.add(chessBoard[x][y - 2]);
                         }
-                        availableTiles.add(squares[x][y - 1]);
+                        availableTiles.add(chessBoard[x][y - 1]);
                         HighlightTiles.highlightSquare(availableTiles);
                     }
                     // If there is an enemy tile to the left
                     if( x > 0 && y > 0)
                     {
-                        if( squares[x-1][y-1].getActionCommand().contains("b"))
+                        if( chessBoard[x-1][y-1].getActionCommand().contains("b"))
                         {
-                            availableEnemyTiles.add(squares[x-1][y-1]);
+                            availableEnemyTiles.add(chessBoard[x-1][y-1]);
                             HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
                         }
                     }
                     // If there is an enemy tile to the right
                     if( x < 7 && y > 0)
                     {
-                        if( squares[x+1][y-1].getActionCommand().contains("b"))
+                        if( chessBoard[x+1][y-1].getActionCommand().contains("b"))
                         {
-                            availableEnemyTiles.add(squares[x+1][y-1]);
+                            availableEnemyTiles.add(chessBoard[x+1][y-1]);
                             HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
                         }
                     }
@@ -206,50 +206,50 @@ public class PieceMovement extends Board{
     // Determine if given space is available for knight
     public static void knightMovement(int x, int y, String enemy, String ally)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || chessBoard[x][y].getActionCommand().contains(ally))
         {
             return;
         }
-        if( squares[x][y].getActionCommand().contains(enemy))
+        if( chessBoard[x][y].getActionCommand().contains(enemy))
         {
-            availableEnemyTiles.add(squares[x][y]);
+            availableEnemyTiles.add(chessBoard[x][y]);
             return;
         }
-        availableTiles.add(squares[x][y]);
+        availableTiles.add(chessBoard[x][y]);
     }
 
     // Recursively find next diagonal movement available
     public static void diagonalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || chessBoard[x][y].getActionCommand().contains(ally))
         {
             return;
         }
-        if( squares[x][y].getActionCommand().contains(enemy))
+        if( chessBoard[x][y].getActionCommand().contains(enemy))
         {
-            availableEnemyTiles.add(squares[x][y]);
+            availableEnemyTiles.add(chessBoard[x][y]);
             return;
         }
         if( x == 0 || y == 0 || x == 7 || y == 7 || isKing)
         {
-            availableTiles.add(squares[x][y]);
+            availableTiles.add(chessBoard[x][y]);
             return;
         }
         switch (dir) {
             case 1 -> {
-                availableTiles.add(squares[x][y]);
+                availableTiles.add(chessBoard[x][y]);
                 diagonalMovement(x+1, y+1, dir, enemy, ally, false);
             }
             case 2 -> {
-                availableTiles.add(squares[x][y]);
+                availableTiles.add(chessBoard[x][y]);
                 diagonalMovement(x-1, y+1, dir, enemy, ally, false);
             }
             case 3 -> {
-                availableTiles.add(squares[x][y]);
+                availableTiles.add(chessBoard[x][y]);
                 diagonalMovement(x+1, y-1, dir, enemy, ally, false);
             }
             case 4 -> {
-                availableTiles.add(squares[x][y]);
+                availableTiles.add(chessBoard[x][y]);
                 diagonalMovement(x-1, y-1, dir, enemy, ally, false);
             }
         }
@@ -258,39 +258,39 @@ public class PieceMovement extends Board{
     // Recursively find next vertical and/or horizontal movement available
     public static void verticalHorizontalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || chessBoard[x][y].getActionCommand().contains(ally))
         {
             return;
         }
-        if( squares[x][y].getActionCommand().contains(enemy))
+        if( chessBoard[x][y].getActionCommand().contains(enemy))
         {
-            availableEnemyTiles.add(squares[x][y]);
+            availableEnemyTiles.add(chessBoard[x][y]);
             return;
         }
         if( isKing )
         {
-            availableTiles.add(squares[x][y]);
+            availableTiles.add(chessBoard[x][y]);
             return;
         }
         if( x == 0 || y == 0 || x == 7 || y == 7  )
         {
-            availableTiles.add(squares[x][y]);
+            availableTiles.add(chessBoard[x][y]);
         }
         switch (dir) {
             case 1 -> {
-                availableTiles.add(squares[x][y]);
+                availableTiles.add(chessBoard[x][y]);
                 verticalHorizontalMovement(x, y+1, dir, enemy, ally, false);
             }
             case 2 -> {
-                availableTiles.add(squares[x][y]);
+                availableTiles.add(chessBoard[x][y]);
                 verticalHorizontalMovement(x, y-1, dir, enemy, ally, false);
             }
             case 3 -> {
-                availableTiles.add(squares[x][y]);
+                availableTiles.add(chessBoard[x][y]);
                 verticalHorizontalMovement(x+1, y, dir, enemy, ally, false);
             }
             case 4 -> {
-                availableTiles.add(squares[x][y]);
+                availableTiles.add(chessBoard[x][y]);
                 verticalHorizontalMovement(x-1, y, dir, enemy, ally, false);
             }
         }
@@ -299,15 +299,15 @@ public class PieceMovement extends Board{
     // Checks for enemy bishops, queens, and rooks in check spots
     public static void checkSpaces(int x, int y, int dir, String enemy, String ally)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally) )
+        if(x > 7 || x < 0 || y > 7 || y < 0 || chessBoard[x][y].getActionCommand().contains(ally) )
         {
             return;
         }
-        if( squares[x][y].getActionCommand().contains(enemy) && !((dir < 4 && squares[x][y].getActionCommand().contains("Rook")) || (dir > 4 && squares[x][y].getActionCommand().contains("Bishop")) || squares[x][y].getActionCommand().contains("Queen")))
+        if( chessBoard[x][y].getActionCommand().contains(enemy) && !((dir < 4 && chessBoard[x][y].getActionCommand().contains("Rook")) || (dir > 4 && chessBoard[x][y].getActionCommand().contains("Bishop")) || chessBoard[x][y].getActionCommand().contains("Queen")))
         {
             return;
         }
-        if( squares[x][y].getActionCommand().contains(enemy) && ((dir < 4 && squares[x][y].getActionCommand().contains("Rook")) || (dir > 4 && squares[x][y].getActionCommand().contains("Bishop")) || squares[x][y].getActionCommand().contains("Queen")))
+        if( chessBoard[x][y].getActionCommand().contains(enemy) && ((dir < 4 && chessBoard[x][y].getActionCommand().contains("Rook")) || (dir > 4 && chessBoard[x][y].getActionCommand().contains("Bishop")) || chessBoard[x][y].getActionCommand().contains("Queen")))
         {
             if(ally.equals("b"))
             {
@@ -336,11 +336,11 @@ public class PieceMovement extends Board{
     // Checks for enemy knights in check spots
     public static void checkForKnight(int x, int y, String enemy, String ally)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || squares[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || chessBoard[x][y].getActionCommand().contains(ally))
         {
             return;
         }
-        if( squares[x][y].getActionCommand().contains(enemy) && squares[x][y].getActionCommand().contains("Knight"))
+        if( chessBoard[x][y].getActionCommand().contains(enemy) && chessBoard[x][y].getActionCommand().contains("Knight"))
         {
             if(ally.equals("b"))
             {
@@ -367,12 +367,12 @@ public class PieceMovement extends Board{
         int xOb = blackLocation.charAt(1)-65;
 
         // Check for pawn
-        if(xOb < 7 && yOb < 7 && (squares[xOb+1][yOb+1].getActionCommand().contains("whPawn") ))
+        if(xOb < 7 && yOb < 7 && (chessBoard[xOb+1][yOb+1].getActionCommand().contains("whPawn") ))
         {
             bKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             blackCheck = true;
         }
-        else if(xOb > 0 && yOb < 7 && squares[xOb-1][yOb+1].getActionCommand().contains("whPawn"))
+        else if(xOb > 0 && yOb < 7 && chessBoard[xOb-1][yOb+1].getActionCommand().contains("whPawn"))
         {
             bKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             blackCheck = true;
@@ -401,12 +401,12 @@ public class PieceMovement extends Board{
         checkSpaces(xOb-1, yOb+1, 8, "wh", "b");
 
         // Check for pawn
-        if(xOwh < 7 && yOwh > 0 && squares[xOwh+1][yOwh-1].getActionCommand().contains("bPawn") )
+        if(xOwh < 7 && yOwh > 0 && chessBoard[xOwh+1][yOwh-1].getActionCommand().contains("bPawn") )
         {
             whKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             whiteCheck = true;
         }
-        else if( xOwh > 0 && yOwh > 0 && squares[xOwh-1][yOwh-1].getActionCommand().contains("bPawn"))
+        else if( xOwh > 0 && yOwh > 0 && chessBoard[xOwh-1][yOwh-1].getActionCommand().contains("bPawn"))
         {
             whKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             whiteCheck = true;
