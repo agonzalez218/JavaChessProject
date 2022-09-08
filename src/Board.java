@@ -408,7 +408,6 @@ public class Board extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         String str = ae.getActionCommand();
         // Convert current (new) tile to matrix location
-        System.out.println(str);
         int yN = (Character.getNumericValue(str.charAt(0))-8)*-1;
         int xN = str.charAt(1)-65;
 
