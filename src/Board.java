@@ -23,15 +23,15 @@ public class Board extends JFrame implements ActionListener {
     static List<JButton> availableTiles = new ArrayList<>();
     static List<JButton> availableEnemyTiles = new ArrayList<>();
     static JButton currentTile = new JButton();
-    String s = "src\\ChessPieces\\";
-    String movingPiece;
-    String originalLocation;
-    Boolean pieceSelected = false;
+    static String s = "src\\ChessPieces\\";
+    static String movingPiece;
+    static String originalLocation;
+    static Boolean pieceSelected = false;
     static Boolean whiteTurn = true;
     static Boolean blackTurn = false;
     static Boolean whiteCheck = false;
     static Boolean blackCheck = false;
-    Boolean teamMoved = false;
+    static Boolean teamMoved = false;
 
     public Board(){
         whiteTurn = true;
@@ -97,6 +97,7 @@ public class Board extends JFrame implements ActionListener {
         whKing = squares[4][7];
         this.add(this.middlePanel);
         this.add(this.form);
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
 
@@ -203,7 +204,7 @@ public class Board extends JFrame implements ActionListener {
         return str;
     }
 
-    public void addIconToButton(String str, JButton button)
+    public static void addIconToButton(String str, JButton button)
     {
         BufferedImage myPicture;
         try {
@@ -213,6 +214,133 @@ public class Board extends JFrame implements ActionListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // Ends current game and resets board if user desires
+    public void endGame()
+    {
+        Object[] options = { "OK", "CANCEL" };
+        Object result = null;
+        if(blackTurn)
+        {
+            // Create dialog message allowing user to decide to restart game or continue
+            result = JOptionPane.showOptionDialog(null, "White has won! Press OK to restart!", "Checkmate",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                    null, options, options[0]);
+        }
+        if(whiteTurn)
+        {
+            // Create dialog message allowing user to decide to restart game or continue
+            result = JOptionPane.showOptionDialog(null, "Black has won! Press OK to restart!", "Checkmate",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                    null, options, options[0]);
+        }
+
+        // If user selects OK restart game
+        if( result != null && (int)result == 0)
+        {
+            Board b = new Board();
+            this.setVisible(false);
+            b.setVisible(true);
+        }
+    }
+
+    public static void savePiece(String chessPiece)
+    {
+        String[] arrOfStr = chessPiece.split(",");
+        originalLocation = arrOfStr[0];
+        movingPiece = arrOfStr[1];
+        pieceSelected = true;
+        teamMoved = true;
+
+        // Convert to matrix location
+        int yO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
+        int xO = originalLocation.charAt(1)-65;
+        PieceMovement.checkKing();
+        PieceMovement.determinePossibleMoves(movingPiece, yO, xO);
+        currentTile = squares[xO][yO];
+        currentTile.setBorder(BorderFactory.createMatteBorder(3,3,3,3,Color.blue));
+    }
+
+    public static void movePiece(String chessPiece, int xN, int yN)
+    {
+        int yO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
+        int xO = originalLocation.charAt(1)-65;
+
+        // Clear action command to just contain location and no image
+        squares[xO][yO].setActionCommand(originalLocation);
+
+
+        // Get Chess Board location from button
+        String[] arrOfStr = chessPiece.split(",");
+        String newLocation = arrOfStr[0];
+
+        // Set new button to contain chess piece and location
+        squares[xN][yN].setActionCommand(newLocation+','+movingPiece);
+
+        // If moving king, update global king variable
+        if (movingPiece.contains("King") && whiteTurn) {
+            whKing = squares[xN][yN];
+        }
+
+        // If moving king, update global king variable
+        if (movingPiece.contains("King") && blackTurn) {
+            bKing = squares[xN][yN];
+        }
+
+        PieceMovement.checkKing();
+        if(whiteTurn) {
+            // Check if white piece can freely move
+            if (whiteCheck) {
+                // Undo piece move as king in check
+                if (movingPiece.contains("King")) {
+                    whKing = squares[xO][yO];
+                }
+                squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
+                squares[xN][yN].setActionCommand(newLocation);
+                PieceMovement.checkKing();
+            } else {
+                // Keep track of king
+                if (movingPiece.contains("King")) {
+                    whKing = squares[xN][yN];
+                }
+                // Confirm piece move
+                squares[xO][yO].setIcon(null);
+                addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
+                blackTurn = !blackTurn;
+                whiteTurn = !whiteTurn;
+            }
+        }
+        else if(blackTurn) {
+            // Check if black piece can freely move
+            if ( blackCheck) {
+                // Undo piece move as king in check
+                if (movingPiece.contains("King")) {
+                    bKing = squares[xO][yO];
+                }
+                squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
+                squares[xN][yN].setActionCommand(newLocation);
+                PieceMovement.checkKing();
+            } else {
+                // Keep track of king
+                if (movingPiece.contains("King")) {
+                    bKing = squares[xN][yN];
+                }
+                // Confirm piece move
+                squares[xO][yO].setIcon(null);
+                addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
+                blackTurn = !blackTurn;
+                whiteTurn = !whiteTurn;
+            }
+        }
+
+        // Reset buffer and condition variables
+        originalLocation = "";
+        movingPiece = "";
+        pieceSelected = false;
+        teamMoved = false;
+        PieceMovement.checkKing();
+        HighlightTiles.highlightSquareEmpty(availableTiles, availableEnemyTiles);
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -240,102 +368,15 @@ public class Board extends JFrame implements ActionListener {
         // Select original piece
         if( str.length() > 2 && !pieceSelected && ((blackTurn && str.contains("b")) || whiteTurn && str.contains("wh")))
         {
-            String[] arrOfStr = str.split(",");
-            originalLocation = arrOfStr[0];
-            movingPiece = arrOfStr[1];
-            pieceSelected = true;
-            teamMoved = true;
-
-            // Convert to matrix location
-            int yO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
-            int xO = originalLocation.charAt(1)-65;
-            PieceMovement.checkKing();
-            PieceMovement.determinePossibleMoves(movingPiece, yO, xO);
-            currentTile = squares[xO][yO];
-            currentTile.setBorder(BorderFactory.createMatteBorder(3,3,3,3,Color.blue));
+            savePiece(str);
         }
 
         // Move piece
         else if( teamMoved && pieceSelected && (availableTiles.contains(squares[xN][yN]) || availableEnemyTiles.contains(squares[xN][yN])))
         {
             // Convert to matrix location
-            int yO = (Character.getNumericValue(originalLocation.charAt(0))-8)*-1;
-            int xO = originalLocation.charAt(1)-65;
-
-            // Clear action command to just contain location and no image
-            squares[xO][yO].setActionCommand(originalLocation);
-
-
-            // Get Chess Board location from button
-            String[] arrOfStr = str.split(",");
-            String newLocation = arrOfStr[0];
-
-            // Set new button to contain chess piece and location
-            squares[xN][yN].setActionCommand(newLocation+','+movingPiece);
-
-            // If moving king, update global king variable
-            if (movingPiece.contains("King") && whiteTurn) {
-                whKing = squares[xN][yN];
-            }
-
-            // If moving king, update global king variable
-            if (movingPiece.contains("King") && blackTurn) {
-                bKing = squares[xN][yN];
-            }
-
-            PieceMovement.checkKing();
-            if(whiteTurn) {
-                // Check if white piece can freely move
-                if (whiteCheck) {
-                    // Undo piece move as king in check
-                    if (movingPiece.contains("King")) {
-                        whKing = squares[xO][yO];
-                    }
-                    squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
-                    squares[xN][yN].setActionCommand(newLocation);
-                    PieceMovement.checkKing();
-                } else {
-                    // Keep track of king
-                    if (movingPiece.contains("King")) {
-                        whKing = squares[xN][yN];
-                    }
-                    // Confirm piece move
-                    squares[xO][yO].setIcon(null);
-                    addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
-                    blackTurn = !blackTurn;
-                    whiteTurn = !whiteTurn;
-                }
-            }
-            else if(blackTurn) {
-                // Check if black piece can freely move
-                if ( blackCheck) {
-                    // Undo piece move as king in check
-                    if (movingPiece.contains("King")) {
-                        bKing = squares[xO][yO];
-                    }
-                    squares[xO][yO].setActionCommand(originalLocation + ',' + movingPiece);
-                    squares[xN][yN].setActionCommand(newLocation);
-                    PieceMovement.checkKing();
-                } else {
-                    // Keep track of king
-                    if (movingPiece.contains("King")) {
-                        bKing = squares[xN][yN];
-                    }
-                    // Confirm piece move
-                    squares[xO][yO].setIcon(null);
-                    addIconToButton(s + movingPiece + ".png", squares[xN][yN]);
-                    blackTurn = !blackTurn;
-                    whiteTurn = !whiteTurn;
-                }
-            }
-
-            // Reset buffer and condition variables
-            originalLocation = "";
-            movingPiece = "";
-            pieceSelected = false;
-            teamMoved = false;
-            PieceMovement.checkKing();
-            HighlightTiles.highlightSquareEmpty(availableTiles, availableEnemyTiles);
+            movePiece(str, xN, yN);
+            //ChessAI.moveAIPiece();
         }
         // add reset buffers if no new piece selected
         else
@@ -345,34 +386,6 @@ public class Board extends JFrame implements ActionListener {
             pieceSelected = false;
             teamMoved = false;
             HighlightTiles.highlightSquareEmpty(availableTiles, availableEnemyTiles);
-        }
-    }
-    public void endGame()
-    {
-        Object[] options = { "OK", "CANCEL" };
-        Object result = null;
-        if(blackTurn)
-        {
-            // Create dialog message allowing user to decide to restart game or continue
-            result = JOptionPane.showOptionDialog(null, "White has won! Press OK to restart!", "Checkmate",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
-                    null, options, options[0]);
-        }
-        if(whiteTurn)
-        {
-            // Create dialog message allowing user to decide to restart game or continue
-            result = JOptionPane.showOptionDialog(null, "Black has won! Press OK to restart!", "Checkmate",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
-                    null, options, options[0]);
-        }
-
-        // If user selects OK restart game
-        if( result != null && (int)result == 0)
-        {
-            Board b = new Board();
-            this.setVisible(false);
-            b.setVisible(true);
-
         }
     }
 }
