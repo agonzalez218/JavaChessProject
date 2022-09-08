@@ -7,10 +7,10 @@ public class HighlightTiles extends Board {
 
     static int option = 68;
 
+    // Setters and Getters of Variables
     public static void setOption(int newOption){
         option = newOption;
     }
-
     public static int getOption(){
         return option;
     }
@@ -32,10 +32,10 @@ public class HighlightTiles extends Board {
         for (JButton jButton : tileEnemyList) {
             jButton.setBorder(UIManager.getBorder("Button.border"));
         }
-        currentTile.setBorder(UIManager.getBorder("Button.border"));
-        availableTiles = new ArrayList<>();
-        availableEnemyTiles = new ArrayList<>();
-        currentTile = new JButton();
+        Board.getCurrentTile().setBorder(UIManager.getBorder("Button.border"));
+        setAvailableTiles(new ArrayList<>());
+        setAvailableEnemyTiles(new ArrayList<>());
+        setCurrentTile(new JButton());
         PieceMovement.checkKing();
     }
 
@@ -56,16 +56,16 @@ public class HighlightTiles extends Board {
             {
                 if( i % 2 == 0 && j % 2 == 1 || i % 2 == 1 && j % 2 == 0)
                 {
-                    switch (option) {
-                        case 68 -> chessBoard[i][j].setBackground(Color.lightGray);
-                        case 84 -> chessBoard[i][j].setBackground(new Color(111, 78, 55));
+                    switch (getOption()) {
+                        case 68 -> getChessBoard()[i][j].setBackground(Color.lightGray);
+                        case 84 -> getChessBoard()[i][j].setBackground(new Color(111, 78, 55));
                     }
                 }
                 else
                 {
-                    switch (option) {
-                        case 68 -> chessBoard[i][j].setBackground(Color.white);
-                        case 84 -> chessBoard[i][j].setBackground(new Color(245, 222, 179));
+                    switch (getOption()) {
+                        case 68 -> getChessBoard()[i][j].setBackground(Color.white);
+                        case 84 -> getChessBoard()[i][j].setBackground(new Color(245, 222, 179));
                     }
                 }
             }

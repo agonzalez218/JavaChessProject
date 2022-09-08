@@ -43,8 +43,8 @@ public class PieceMovement extends Board{
                     diagonalMovement(x+1, y-1, 3, "b", "wh", true);
                     diagonalMovement(x-1, y-1, 4, "b", "wh", true);
                 }
-                HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
-                HighlightTiles.highlightSquare(availableTiles);
+                HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
+                HighlightTiles.highlightSquare(getAvailableTiles());
                 break;
             case "Queen":
                 if(teamColor.equals("b"))
@@ -70,8 +70,8 @@ public class PieceMovement extends Board{
                     diagonalMovement(x+1, y-1, 3, "b", "wh", false);
                     diagonalMovement(x-1, y-1, 4, "b", "wh", false);
                 }
-                HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
-                HighlightTiles.highlightSquare(availableTiles);
+                HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
+                HighlightTiles.highlightSquare(getAvailableTiles());
                 break;
             case "Rook":
                 if(teamColor.equals("b"))
@@ -89,8 +89,8 @@ public class PieceMovement extends Board{
                     verticalHorizontalMovement(x+1, y, 3, "b", "wh", false);
                     verticalHorizontalMovement(x-1, y, 4, "b", "wh", false);
                 }
-                HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
-                HighlightTiles.highlightSquare(availableTiles);
+                HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
+                HighlightTiles.highlightSquare(getAvailableTiles());
                 break;
             case "Bishop":
                 if(teamColor.equals("b"))
@@ -107,8 +107,8 @@ public class PieceMovement extends Board{
                     diagonalMovement(x+1, y-1, 3, "b", "wh", false);
                     diagonalMovement(x-1, y-1, 4, "b", "wh", false);
                 }
-                HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
-                HighlightTiles.highlightSquare(availableTiles);
+                HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
+                HighlightTiles.highlightSquare(getAvailableTiles());
                 break;
             case "Knight":
                 if(teamColor.equals("b"))
@@ -121,8 +121,8 @@ public class PieceMovement extends Board{
                     knightMovement(x+1, y-2, "wh", "b");
                     knightMovement(x-1, y+2, "wh", "b");
                     knightMovement(x-1, y-2, "wh", "b");
-                    HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
-                    HighlightTiles.highlightSquare(availableTiles);
+                    HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
+                    HighlightTiles.highlightSquare(getAvailableTiles());
                 }
                 else if(teamColor.equals("wh"))
                 {
@@ -134,68 +134,68 @@ public class PieceMovement extends Board{
                     knightMovement(x+1, y-2, "b", "wh");
                     knightMovement(x-1, y+2, "b", "wh");
                     knightMovement(x-1, y-2, "b", "wh");
-                    HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
-                    HighlightTiles.highlightSquare(availableTiles);
+                    HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
+                    HighlightTiles.highlightSquare(getAvailableTiles());
                 }
                 break;
             case "Pawn":
                 if(teamColor.equals("b")) {
                     // If end of board, or enemy/ally no more movement allowed
-                    if( y < 7 && !(chessBoard[x][y+1].getActionCommand().contains("b")) && !(chessBoard[x][y+1].getActionCommand().contains("wh")))
+                    if( y < 7 && !(getChessBoard()[x][y+1].getActionCommand().contains("b")) && !(getChessBoard()[x][y+1].getActionCommand().contains("wh")))
                     {
                         // First move can be two tiles up
-                        if (y == 1 && !(chessBoard[x][y+2].getActionCommand().contains("wh"))) {
-                            availableTiles.add(chessBoard[x][y + 2]);
+                        if (y == 1 && !(getChessBoard()[x][y+2].getActionCommand().contains("wh"))) {
+                            getAvailableTiles().add(getChessBoard()[x][y + 2]);
                         }
-                        availableTiles.add(chessBoard[x][y + 1]);
-                        HighlightTiles.highlightSquare(availableTiles);
+                        getAvailableTiles().add(getChessBoard()[x][y + 1]);
+                        HighlightTiles.highlightSquare(getAvailableTiles());
                     }
                     // If there is an enemy tile to the right
                     if( x < 7 && y < 7 )
                     {
-                        if( chessBoard[x+1][y+1].getActionCommand().contains("wh"))
+                        if( getChessBoard()[x+1][y+1].getActionCommand().contains("wh"))
                         {
-                            availableEnemyTiles.add(chessBoard[x+1][y+1]);
-                            HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
+                            getAvailableEnemyTiles().add(getChessBoard()[x+1][y+1]);
+                            HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
                         }
                     }
                     // If there is an enemy tile to the left
                     if( x > 0 && y < 7 )
                     {
-                        if( chessBoard[x-1][y+1].getActionCommand().contains("wh"))
+                        if( getChessBoard()[x-1][y+1].getActionCommand().contains("wh"))
                         {
-                            availableEnemyTiles.add(chessBoard[x-1][y+1]);
-                            HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
+                            getAvailableEnemyTiles().add(getChessBoard()[x-1][y+1]);
+                            HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
                         }
                     }
                 }
                 else if(teamColor.equals("wh")) {
                     // If end of board, or enemy/ally no more movement allowed
-                    if( y > 0 && !(chessBoard[x][y-1].getActionCommand().contains("b")) && !(chessBoard[x][y-1].getActionCommand().contains("wh")))
+                    if( y > 0 && !(getChessBoard()[x][y-1].getActionCommand().contains("b")) && !(getChessBoard()[x][y-1].getActionCommand().contains("wh")))
                     {
                         // First move can be two tiles up
-                        if (y == 6 && !(chessBoard[x][y-2].getActionCommand().contains("b"))) {
-                            availableTiles.add(chessBoard[x][y - 2]);
+                        if (y == 6 && !(getChessBoard()[x][y-2].getActionCommand().contains("b"))) {
+                            getAvailableTiles().add(getChessBoard()[x][y - 2]);
                         }
-                        availableTiles.add(chessBoard[x][y - 1]);
-                        HighlightTiles.highlightSquare(availableTiles);
+                        getAvailableTiles().add(getChessBoard()[x][y - 1]);
+                        HighlightTiles.highlightSquare(getAvailableTiles());
                     }
                     // If there is an enemy tile to the left
                     if( x > 0 && y > 0)
                     {
-                        if( chessBoard[x-1][y-1].getActionCommand().contains("b"))
+                        if( getChessBoard()[x-1][y-1].getActionCommand().contains("b"))
                         {
-                            availableEnemyTiles.add(chessBoard[x-1][y-1]);
-                            HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
+                            getAvailableEnemyTiles().add(getChessBoard()[x-1][y-1]);
+                            HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
                         }
                     }
                     // If there is an enemy tile to the right
                     if( x < 7 && y > 0)
                     {
-                        if( chessBoard[x+1][y-1].getActionCommand().contains("b"))
+                        if( getChessBoard()[x+1][y-1].getActionCommand().contains("b"))
                         {
-                            availableEnemyTiles.add(chessBoard[x+1][y-1]);
-                            HighlightTiles.highlightSquareEnemy(availableEnemyTiles);
+                            getAvailableEnemyTiles().add(getChessBoard()[x+1][y-1]);
+                            HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
                         }
                     }
                 }
@@ -206,50 +206,50 @@ public class PieceMovement extends Board{
     // Determine if given space is available for knight
     public static void knightMovement(int x, int y, String enemy, String ally)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || chessBoard[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally))
         {
             return;
         }
-        if( chessBoard[x][y].getActionCommand().contains(enemy))
+        if( getChessBoard()[x][y].getActionCommand().contains(enemy))
         {
-            availableEnemyTiles.add(chessBoard[x][y]);
+            getAvailableEnemyTiles().add(getChessBoard()[x][y]);
             return;
         }
-        availableTiles.add(chessBoard[x][y]);
+        getAvailableTiles().add(getChessBoard()[x][y]);
     }
 
     // Recursively find next diagonal movement available
     public static void diagonalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || chessBoard[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally))
         {
             return;
         }
-        if( chessBoard[x][y].getActionCommand().contains(enemy))
+        if( getChessBoard()[x][y].getActionCommand().contains(enemy))
         {
-            availableEnemyTiles.add(chessBoard[x][y]);
+            getAvailableEnemyTiles().add(getChessBoard()[x][y]);
             return;
         }
         if( x == 0 || y == 0 || x == 7 || y == 7 || isKing)
         {
-            availableTiles.add(chessBoard[x][y]);
+            getAvailableTiles().add(getChessBoard()[x][y]);
             return;
         }
         switch (dir) {
             case 1 -> {
-                availableTiles.add(chessBoard[x][y]);
+                getAvailableTiles().add(getChessBoard()[x][y]);
                 diagonalMovement(x+1, y+1, dir, enemy, ally, false);
             }
             case 2 -> {
-                availableTiles.add(chessBoard[x][y]);
+                getAvailableTiles().add(getChessBoard()[x][y]);
                 diagonalMovement(x-1, y+1, dir, enemy, ally, false);
             }
             case 3 -> {
-                availableTiles.add(chessBoard[x][y]);
+                getAvailableTiles().add(getChessBoard()[x][y]);
                 diagonalMovement(x+1, y-1, dir, enemy, ally, false);
             }
             case 4 -> {
-                availableTiles.add(chessBoard[x][y]);
+                getAvailableTiles().add(getChessBoard()[x][y]);
                 diagonalMovement(x-1, y-1, dir, enemy, ally, false);
             }
         }
@@ -258,39 +258,39 @@ public class PieceMovement extends Board{
     // Recursively find next vertical and/or horizontal movement available
     public static void verticalHorizontalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || chessBoard[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally))
         {
             return;
         }
-        if( chessBoard[x][y].getActionCommand().contains(enemy))
+        if( getChessBoard()[x][y].getActionCommand().contains(enemy))
         {
-            availableEnemyTiles.add(chessBoard[x][y]);
+            getAvailableEnemyTiles().add(getChessBoard()[x][y]);
             return;
         }
         if( isKing )
         {
-            availableTiles.add(chessBoard[x][y]);
+            getAvailableTiles().add(getChessBoard()[x][y]);
             return;
         }
         if( x == 0 || y == 0 || x == 7 || y == 7  )
         {
-            availableTiles.add(chessBoard[x][y]);
+            getAvailableTiles().add(getChessBoard()[x][y]);
         }
         switch (dir) {
             case 1 -> {
-                availableTiles.add(chessBoard[x][y]);
+                getAvailableTiles().add(getChessBoard()[x][y]);
                 verticalHorizontalMovement(x, y+1, dir, enemy, ally, false);
             }
             case 2 -> {
-                availableTiles.add(chessBoard[x][y]);
+                getAvailableTiles().add(getChessBoard()[x][y]);
                 verticalHorizontalMovement(x, y-1, dir, enemy, ally, false);
             }
             case 3 -> {
-                availableTiles.add(chessBoard[x][y]);
+                getAvailableTiles().add(getChessBoard()[x][y]);
                 verticalHorizontalMovement(x+1, y, dir, enemy, ally, false);
             }
             case 4 -> {
-                availableTiles.add(chessBoard[x][y]);
+                getAvailableTiles().add(getChessBoard()[x][y]);
                 verticalHorizontalMovement(x-1, y, dir, enemy, ally, false);
             }
         }
@@ -299,25 +299,25 @@ public class PieceMovement extends Board{
     // Checks for enemy bishops, queens, and rooks in check spots
     public static void checkSpaces(int x, int y, int dir, String enemy, String ally)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || chessBoard[x][y].getActionCommand().contains(ally) )
+        if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally) )
         {
             return;
         }
-        if( chessBoard[x][y].getActionCommand().contains(enemy) && !((dir < 4 && chessBoard[x][y].getActionCommand().contains("Rook")) || (dir > 4 && chessBoard[x][y].getActionCommand().contains("Bishop")) || chessBoard[x][y].getActionCommand().contains("Queen")))
+        if( getChessBoard()[x][y].getActionCommand().contains(enemy) && !((dir < 4 && getChessBoard()[x][y].getActionCommand().contains("Rook")) || (dir > 4 && getChessBoard()[x][y].getActionCommand().contains("Bishop")) || getChessBoard()[x][y].getActionCommand().contains("Queen")))
         {
             return;
         }
-        if( chessBoard[x][y].getActionCommand().contains(enemy) && ((dir < 4 && chessBoard[x][y].getActionCommand().contains("Rook")) || (dir > 4 && chessBoard[x][y].getActionCommand().contains("Bishop")) || chessBoard[x][y].getActionCommand().contains("Queen")))
+        if( getChessBoard()[x][y].getActionCommand().contains(enemy) && ((dir < 4 && getChessBoard()[x][y].getActionCommand().contains("Rook")) || (dir > 4 && getChessBoard()[x][y].getActionCommand().contains("Bishop")) || getChessBoard()[x][y].getActionCommand().contains("Queen")))
         {
             if(ally.equals("b"))
             {
-                blackCheck = true;
-                bKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+                setBlackCheck(true);
+                getbKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             }
             else
             {
-                whiteCheck = true;
-                whKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+                setWhiteCheck(true);
+                getwhKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             }
             return;
         }
@@ -336,21 +336,21 @@ public class PieceMovement extends Board{
     // Checks for enemy knights in check spots
     public static void checkForKnight(int x, int y, String enemy, String ally)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || chessBoard[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally))
         {
             return;
         }
-        if( chessBoard[x][y].getActionCommand().contains(enemy) && chessBoard[x][y].getActionCommand().contains("Knight"))
+        if( getChessBoard()[x][y].getActionCommand().contains(enemy) && getChessBoard()[x][y].getActionCommand().contains("Knight"))
         {
             if(ally.equals("b"))
             {
-                blackCheck = true;
-                bKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+                setBlackCheck(true);
+                getbKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             }
             else
             {
-                whiteCheck = true;
-                whKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+                setWhiteCheck(true);
+                getwhKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             }
         }
     }
@@ -358,8 +358,8 @@ public class PieceMovement extends Board{
     public static void checkKing()
     {
         String blackLocation, whiteLocation;
-        whiteLocation = whKing.getActionCommand().substring(0,2);
-        blackLocation = bKing.getActionCommand().substring(0,2);
+        whiteLocation = getwhKing().getActionCommand().substring(0,2);
+        blackLocation = getbKing().getActionCommand().substring(0,2);
 
         int yOwh = (Character.getNumericValue(whiteLocation.charAt(0))-8)*-1;
         int xOwh = whiteLocation.charAt(1)-65;
@@ -367,20 +367,20 @@ public class PieceMovement extends Board{
         int xOb = blackLocation.charAt(1)-65;
 
         // Check for pawn
-        if(xOb < 7 && yOb < 7 && (chessBoard[xOb+1][yOb+1].getActionCommand().contains("whPawn") ))
+        if(xOb < 7 && yOb < 7 && (getChessBoard()[xOb+1][yOb+1].getActionCommand().contains("whPawn") ))
         {
-            bKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
-            blackCheck = true;
+            getbKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            setBlackCheck(true);
         }
-        else if(xOb > 0 && yOb < 7 && chessBoard[xOb-1][yOb+1].getActionCommand().contains("whPawn"))
+        else if(xOb > 0 && yOb < 7 && getChessBoard()[xOb-1][yOb+1].getActionCommand().contains("whPawn"))
         {
-            bKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
-            blackCheck = true;
+            getbKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            setBlackCheck(true);
         }
         else
         {
-            bKing.setBorder(UIManager.getBorder("Button.border"));
-            blackCheck = false;
+            getbKing().setBorder(UIManager.getBorder("Button.border"));
+            setBlackCheck(false);
         }
 
         checkForKnight(xOb+2, yOb+1, "wh", "b");
@@ -401,20 +401,20 @@ public class PieceMovement extends Board{
         checkSpaces(xOb-1, yOb+1, 8, "wh", "b");
 
         // Check for pawn
-        if(xOwh < 7 && yOwh > 0 && chessBoard[xOwh+1][yOwh-1].getActionCommand().contains("bPawn") )
+        if(xOwh < 7 && yOwh > 0 && getChessBoard()[xOwh+1][yOwh-1].getActionCommand().contains("bPawn") )
         {
-            whKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
-            whiteCheck = true;
+            getwhKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            setWhiteCheck(true);
         }
-        else if( xOwh > 0 && yOwh > 0 && chessBoard[xOwh-1][yOwh-1].getActionCommand().contains("bPawn"))
+        else if( xOwh > 0 && yOwh > 0 && getChessBoard()[xOwh-1][yOwh-1].getActionCommand().contains("bPawn"))
         {
-            whKing.setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
-            whiteCheck = true;
+            getwhKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
+            setWhiteCheck(true);
         }
         else
         {
-            whKing.setBorder(UIManager.getBorder("Button.border"));
-            whiteCheck = false;
+            getwhKing().setBorder(UIManager.getBorder("Button.border"));
+            setWhiteCheck(false);
         }
         checkForKnight(xOwh+2, yOwh+1, "b", "wh");
         checkForKnight(xOwh+2, yOwh-1, "b", "wh");
