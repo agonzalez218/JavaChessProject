@@ -305,12 +305,10 @@ public class PieceMovement extends Board{
             if(ally.equals("b"))
             {
                 setBlackCheck(true);
-                getbKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             }
             else
             {
                 setWhiteCheck(true);
-                getwhKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             }
             return;
         }
@@ -338,25 +336,23 @@ public class PieceMovement extends Board{
             if(ally.equals("b"))
             {
                 setBlackCheck(true);
-                getbKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             }
             else
             {
                 setWhiteCheck(true);
-                getwhKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
             }
         }
     }
 
-    public static void checkKing()
+    public static void checkKing(JButton whiteKing, JButton blackKing)
     {
         String blackLocation, whiteLocation;
-        if( !getwhKing().getActionCommand().contains("whKing") || !getbKing().getActionCommand().contains("bKing"))
+        if( !whiteKing.getActionCommand().contains("whKing") || !blackKing.getActionCommand().contains("bKing"))
         {
             return;
         }
-        whiteLocation = getwhKing().getActionCommand().substring(0,2);
-        blackLocation = getbKing().getActionCommand().substring(0,2);
+        whiteLocation = whiteKing.getActionCommand().substring(0,2);
+        blackLocation = blackKing.getActionCommand().substring(0,2);
 
         int yOwh = (Character.getNumericValue(whiteLocation.charAt(0))-8)*-1;
         int xOwh = whiteLocation.charAt(1)-65;
@@ -364,21 +360,7 @@ public class PieceMovement extends Board{
         int xOb = blackLocation.charAt(1)-65;
 
         // Check for pawn
-        if(xOb < 7 && yOb < 7 && (getChessBoard()[xOb+1][yOb+1].getActionCommand().contains("whPawn") ))
-        {
-            getbKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
-            setBlackCheck(true);
-        }
-        else if(xOb > 0 && yOb < 7 && getChessBoard()[xOb-1][yOb+1].getActionCommand().contains("whPawn"))
-        {
-            getbKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
-            setBlackCheck(true);
-        }
-        else
-        {
-            getbKing().setBorder(UIManager.getBorder("Button.border"));
-            setBlackCheck(false);
-        }
+        setBlackCheck(xOb < 7 && yOb < 7 && (getChessBoard()[xOb + 1][yOb + 1].getActionCommand().contains("whPawn") || xOb > 0 && getChessBoard()[xOb - 1][yOb + 1].getActionCommand().contains("whPawn")));
 
         checkForKnight(xOb+2, yOb+1, "wh", "b");
         checkForKnight(xOb+2, yOb-1, "wh", "b");
@@ -398,21 +380,8 @@ public class PieceMovement extends Board{
         checkSpaces(xOb-1, yOb+1, 8, "wh", "b");
 
         // Check for pawn
-        if(xOwh < 7 && yOwh > 0 && getChessBoard()[xOwh+1][yOwh-1].getActionCommand().contains("bPawn") )
-        {
-            getwhKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
-            setWhiteCheck(true);
-        }
-        else if( xOwh > 0 && yOwh > 0 && getChessBoard()[xOwh-1][yOwh-1].getActionCommand().contains("bPawn"))
-        {
-            getwhKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));
-            setWhiteCheck(true);
-        }
-        else
-        {
-            getwhKing().setBorder(UIManager.getBorder("Button.border"));
-            setWhiteCheck(false);
-        }
+        setWhiteCheck(xOwh < 7 && yOwh > 0 && getChessBoard()[xOwh + 1][yOwh - 1].getActionCommand().contains("bPawn") || xOwh > 0 && yOwh > 0 && getChessBoard()[xOwh - 1][yOwh - 1].getActionCommand().contains("bPawn"));
+
         checkForKnight(xOwh+2, yOwh+1, "b", "wh");
         checkForKnight(xOwh+2, yOwh-1, "b", "wh");
         checkForKnight(xOwh-2, yOwh+1, "b", "wh");
@@ -442,7 +411,7 @@ public class PieceMovement extends Board{
         // Convert to matrix location
         int yO = (Character.getNumericValue(getOriginalLocation().charAt(0))-8)*-1;
         int xO = getOriginalLocation().charAt(1)-65;
-        PieceMovement.checkKing();
+        PieceMovement.checkKing(getwhKing(), getbKing());
         PieceMovement.determinePossibleMoves(getMovingPiece(), yO, xO);
         setCurrentTile(getChessBoardTile(xO, yO));
         getCurrentTile().setBorder(BorderFactory.createMatteBorder(3,3,3,3,Color.blue));
@@ -477,8 +446,9 @@ public class PieceMovement extends Board{
         setTempPiece("");
         setPieceSelected(false);
         setTeamMoved(false);
+        PieceMovement.checkKing(getwhKing(), getbKing());
         HighlightTiles.highlightSquareEmpty(getAvailableTiles(), getAvailableEnemyTiles());
-        PieceMovement.checkKing();
+
 
         if( getCurrentTurn().equals("b") ) { setCurrentTurn("wh"); }
         else { setCurrentTurn("b"); }
@@ -503,25 +473,12 @@ public class PieceMovement extends Board{
         // Set new button to contain chess piece and location
         getChessBoardTile(xN,yN).setActionCommand(locationN+','+piece);
 
-        // If moving king, update global king variable
-        if (piece.contains("whKing") && getCurrentTurn().equals("wh")) {
-            setwhKing(getChessBoardTile(xN,yN));
-        }
-
-        // If moving king, update global king variable
-        if (getChessBoardTile(xN,yN).getActionCommand().contains("bKing") && getCurrentTurn().equals("b")) {
-            setbKing(getChessBoardTile(xN,yN));
-        }
-
-        PieceMovement.checkKing();
+        PieceMovement.checkKing(getwhKing(), getbKing());
         if(getCurrentTurn().equals("wh")) {
             // Check if white piece can freely move
             if (getWhiteCheck()) {
                 // Undo piece move as king in check
                 getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
-                if (piece.contains("King") && getChessBoardTile(xO,yO).getActionCommand().contains("whKing")) {
-                    setwhKing(getChessBoardTile(xO,yO));
-                }
                 if(!Objects.equals(getTempPiece(), ""))
                 {
                     getChessBoardTile(xN,yN).setActionCommand(locationN+','+getTempPiece());
@@ -535,9 +492,6 @@ public class PieceMovement extends Board{
             } else {
                 // Undo piece move as king in check
                 getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
-                if (piece.contains("King") && getChessBoardTile(xO,yO).getActionCommand().contains("whKing")) {
-                    setwhKing(getChessBoardTile(xO,yO));
-                }
                 if(!Objects.equals(getTempPiece(), ""))
                 {
                     getChessBoardTile(xN,yN).setActionCommand(locationN+','+getTempPiece());
@@ -555,9 +509,6 @@ public class PieceMovement extends Board{
             if ( getBlackCheck() ) {
                 // Undo piece move as king in check
                 getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
-                if (getMovingPiece().contains("King") && getChessBoardTile(xO,yO).getActionCommand().contains("bKing")) {
-                    setbKing(getChessBoardTile(xO,yO));
-                }
                 if(!Objects.equals(getTempPiece(), ""))
                 {
                     getChessBoardTile(xN,yN).setActionCommand(locationN+getTempPiece());
@@ -570,9 +521,6 @@ public class PieceMovement extends Board{
                 return false;
             } else {
                 getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
-                if (piece.contains("King") && getChessBoardTile(xO,yO).getActionCommand().contains("bKing")) {
-                    setbKing(getChessBoardTile(xO,yO));
-                }
                 if(!Objects.equals(getTempPiece(), ""))
                 {
                     getChessBoardTile(xN,yN).setActionCommand(locationN+getTempPiece());

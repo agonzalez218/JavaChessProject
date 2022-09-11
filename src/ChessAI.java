@@ -28,6 +28,7 @@ public class ChessAI extends Board{
     public static Move selectMove(Board board){
         generateAllMoves();
         int random_int = (int) ((Math.random() * (getAvailableMoves().size()-1)));
+        System.out.println("Available Moves: " + getAvailableMoves().size());
         if( getAvailableMoves().size() == 0 )
         {
             board.endGame();
@@ -60,6 +61,10 @@ public class ChessAI extends Board{
                 if( getTeamMoved() && getPieceSelected() && (getAvailableTiles().contains(getChessBoardTile(newPieceLocation[0],newPieceLocation[1])) || getAvailableEnemyTiles().contains(getChessBoardTile(newPieceLocation[0],newPieceLocation[1]))))
                 {
                     // Convert to matrix location
+                    if( chosenMove.movingChessPiece.contains("King"))
+                    {
+                        setbKing(getChessBoardTile(newPieceLocation[0],newPieceLocation[1]));
+                    }
                     PieceMovement.movePiece(getNewTile(), newPieceLocation[0], newPieceLocation[1]);
                     setAvailableMoves(new ArrayList<>());
                     setOriginalTile("");
@@ -85,7 +90,7 @@ public class ChessAI extends Board{
                         possibleMove.movingChessPiece = firstTileInfo[1];
                         possibleMove.NewLocation = tile.getActionCommand();
                         possibleMove.pointValue = 0;
-                        if( PieceMovement.isValidMove(possibleMove.OriginalLocation, possibleMove.NewLocation, possibleMove.movingChessPiece) )
+                        //if( PieceMovement.isValidMove(possibleMove.OriginalLocation, possibleMove.NewLocation, possibleMove.movingChessPiece) )
                         {
                             getAvailableMoves().add(possibleMove);
                         }

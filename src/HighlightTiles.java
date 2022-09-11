@@ -33,6 +33,12 @@ public class HighlightTiles extends Board {
             jButton.setBorder(UIManager.getBorder("Button.border"));
         }
         Board.getCurrentTile().setBorder(UIManager.getBorder("Button.border"));
+
+        if( getWhiteCheck() ) {getwhKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));}
+        else {getwhKing().setBorder(UIManager.getBorder("Button.border"));}
+        if( getBlackCheck() ) {getbKing().setBorder(BorderFactory.createMatteBorder(3,3,3,3, Color.red));}
+        else {getbKing().setBorder(UIManager.getBorder("Button.border"));}
+
         setAvailableTiles(new ArrayList<>());
         setAvailableEnemyTiles(new ArrayList<>());
         setCurrentTile(new JButton());
