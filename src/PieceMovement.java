@@ -1,7 +1,18 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class PieceMovement extends Board{
+
+    static String movingPiece, tempPiece, originalLocation;
+
+    // Getters and Setters
+    public static void setMovingPiece(String piece) { movingPiece = piece; }
+    public static String getMovingPiece(){return movingPiece;}
+    public static void setTempPiece(String piece) { tempPiece = piece; }
+    public static String getTempPiece(){return tempPiece;}
+    public static void setOriginalLocation(String location) { originalLocation = location; }
+    public static String getOriginalLocation(){return originalLocation;}
 
     public static void determinePossibleMoves(String chessPieceOrig, int y, int x)
     {
@@ -43,8 +54,6 @@ public class PieceMovement extends Board{
                     diagonalMovement(x+1, y-1, 3, "b", "wh", true);
                     diagonalMovement(x-1, y-1, 4, "b", "wh", true);
                 }
-                HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
-                HighlightTiles.highlightSquare(getAvailableTiles());
                 break;
             case "Queen":
                 if(teamColor.equals("b"))
@@ -70,8 +79,6 @@ public class PieceMovement extends Board{
                     diagonalMovement(x+1, y-1, 3, "b", "wh", false);
                     diagonalMovement(x-1, y-1, 4, "b", "wh", false);
                 }
-                HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
-                HighlightTiles.highlightSquare(getAvailableTiles());
                 break;
             case "Rook":
                 if(teamColor.equals("b"))
@@ -89,8 +96,6 @@ public class PieceMovement extends Board{
                     verticalHorizontalMovement(x+1, y, 3, "b", "wh", false);
                     verticalHorizontalMovement(x-1, y, 4, "b", "wh", false);
                 }
-                HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
-                HighlightTiles.highlightSquare(getAvailableTiles());
                 break;
             case "Bishop":
                 if(teamColor.equals("b"))
@@ -107,8 +112,6 @@ public class PieceMovement extends Board{
                     diagonalMovement(x+1, y-1, 3, "b", "wh", false);
                     diagonalMovement(x-1, y-1, 4, "b", "wh", false);
                 }
-                HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
-                HighlightTiles.highlightSquare(getAvailableTiles());
                 break;
             case "Knight":
                 if(teamColor.equals("b"))
@@ -121,8 +124,6 @@ public class PieceMovement extends Board{
                     knightMovement(x+1, y-2, "wh", "b");
                     knightMovement(x-1, y+2, "wh", "b");
                     knightMovement(x-1, y-2, "wh", "b");
-                    HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
-                    HighlightTiles.highlightSquare(getAvailableTiles());
                 }
                 else if(teamColor.equals("wh"))
                 {
@@ -134,8 +135,6 @@ public class PieceMovement extends Board{
                     knightMovement(x+1, y-2, "b", "wh");
                     knightMovement(x-1, y+2, "b", "wh");
                     knightMovement(x-1, y-2, "b", "wh");
-                    HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
-                    HighlightTiles.highlightSquare(getAvailableTiles());
                 }
                 break;
             case "Pawn":
@@ -148,7 +147,6 @@ public class PieceMovement extends Board{
                             getAvailableTiles().add(getChessBoard()[x][y + 2]);
                         }
                         getAvailableTiles().add(getChessBoard()[x][y + 1]);
-                        HighlightTiles.highlightSquare(getAvailableTiles());
                     }
                     // If there is an enemy tile to the right
                     if( x < 7 && y < 7 )
@@ -156,7 +154,6 @@ public class PieceMovement extends Board{
                         if( getChessBoard()[x+1][y+1].getActionCommand().contains("wh"))
                         {
                             getAvailableEnemyTiles().add(getChessBoard()[x+1][y+1]);
-                            HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
                         }
                     }
                     // If there is an enemy tile to the left
@@ -165,7 +162,6 @@ public class PieceMovement extends Board{
                         if( getChessBoard()[x-1][y+1].getActionCommand().contains("wh"))
                         {
                             getAvailableEnemyTiles().add(getChessBoard()[x-1][y+1]);
-                            HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
                         }
                     }
                 }
@@ -178,7 +174,6 @@ public class PieceMovement extends Board{
                             getAvailableTiles().add(getChessBoard()[x][y - 2]);
                         }
                         getAvailableTiles().add(getChessBoard()[x][y - 1]);
-                        HighlightTiles.highlightSquare(getAvailableTiles());
                     }
                     // If there is an enemy tile to the left
                     if( x > 0 && y > 0)
@@ -186,7 +181,6 @@ public class PieceMovement extends Board{
                         if( getChessBoard()[x-1][y-1].getActionCommand().contains("b"))
                         {
                             getAvailableEnemyTiles().add(getChessBoard()[x-1][y-1]);
-                            HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
                         }
                     }
                     // If there is an enemy tile to the right
@@ -195,7 +189,6 @@ public class PieceMovement extends Board{
                         if( getChessBoard()[x+1][y-1].getActionCommand().contains("b"))
                         {
                             getAvailableEnemyTiles().add(getChessBoard()[x+1][y-1]);
-                            HighlightTiles.highlightSquareEnemy(getAvailableEnemyTiles());
                         }
                     }
                 }
@@ -358,6 +351,10 @@ public class PieceMovement extends Board{
     public static void checkKing()
     {
         String blackLocation, whiteLocation;
+        if( !getwhKing().getActionCommand().contains("whKing") || !getbKing().getActionCommand().contains("bKing"))
+        {
+            return;
+        }
         whiteLocation = getwhKing().getActionCommand().substring(0,2);
         blackLocation = getbKing().getActionCommand().substring(0,2);
 
@@ -432,5 +429,171 @@ public class PieceMovement extends Board{
         checkSpaces(xOwh-1, yOwh-1, 6, "b", "wh");
         checkSpaces(xOwh+1, yOwh-1, 7, "b", "wh");
         checkSpaces(xOwh-1, yOwh+1, 8, "b", "wh");
+    }
+
+    public static void savePiece(String chessPiece)
+    {
+        String[] arrOfStr = chessPiece.split(",");
+        setOriginalLocation(arrOfStr[0]);
+        setMovingPiece(arrOfStr[1]);
+        setPieceSelected(true);
+        setTeamMoved(true);
+
+        // Convert to matrix location
+        int yO = (Character.getNumericValue(getOriginalLocation().charAt(0))-8)*-1;
+        int xO = getOriginalLocation().charAt(1)-65;
+        PieceMovement.checkKing();
+        PieceMovement.determinePossibleMoves(getMovingPiece(), yO, xO);
+        setCurrentTile(getChessBoardTile(xO, yO));
+        getCurrentTile().setBorder(BorderFactory.createMatteBorder(3,3,3,3,Color.blue));
+    }
+
+    public static void movePiece(String newSelectedTile, int xN, int yN)
+    {
+        String[] arrOfStr = newSelectedTile.split(",");
+        String newLocation = arrOfStr[0];
+
+        int yO = (Character.getNumericValue(getOriginalLocation().charAt(0))-8)*-1;
+        int xO = getOriginalLocation().charAt(1)-65;
+
+        getChessBoardTile(xO,yO).setActionCommand(getOriginalLocation());
+        getChessBoardTile(xN,yN).setActionCommand(newLocation+','+getMovingPiece());
+        if (getMovingPiece().contains("whKing") && getCurrentTurn().equals("wh")) {
+             getwhKing().setBorder(UIManager.getBorder("Button.border"));
+             setwhKing(getChessBoardTile(xN,yN));
+        }
+
+            // If moving king, update global king variable
+        if (getMovingPiece().contains("bKing") && getCurrentTurn().equals("b")) {
+            getbKing().setBorder(UIManager.getBorder("Button.border"));
+            setbKing(getChessBoardTile(xN,yN));
+        }
+
+        getChessBoardTile(xO,yO).setIcon(null);
+        addIconToButton(s + getMovingPiece() + ".png", getChessBoardTile(xN,yN));
+
+        setOriginalLocation("");
+        setMovingPiece("");
+        setTempPiece("");
+        setPieceSelected(false);
+        setTeamMoved(false);
+        HighlightTiles.highlightSquareEmpty(getAvailableTiles(), getAvailableEnemyTiles());
+        PieceMovement.checkKing();
+
+        if( getCurrentTurn().equals("b") ) { setCurrentTurn("wh"); }
+        else { setCurrentTurn("b"); }
+    }
+
+    public static boolean isValidMove(String locationO, String locationN, String piece)
+    {
+        int yO = (Character.getNumericValue(locationO.charAt(0))-8)*-1;
+        int xO = locationO.charAt(1)-65;
+        int yN = (Character.getNumericValue(locationN.charAt(0))-8)*-1;
+        int xN = locationN.charAt(1)-65;
+        JButton locationNTile = getChessBoardTile(xN, yN);
+
+        // Clear action command to just contain location and no image
+        getChessBoardTile(xO,yO).setActionCommand(locationO);
+
+        if(getChessBoardTile(xN,yN).getActionCommand().length() > 2)
+        {
+            setTempPiece(getChessBoardTile(xN,yN).getActionCommand().substring(2));
+        }
+
+        // Set new button to contain chess piece and location
+        getChessBoardTile(xN,yN).setActionCommand(locationN+','+piece);
+
+        // If moving king, update global king variable
+        if (piece.contains("whKing") && getCurrentTurn().equals("wh")) {
+            setwhKing(getChessBoardTile(xN,yN));
+        }
+
+        // If moving king, update global king variable
+        if (getChessBoardTile(xN,yN).getActionCommand().contains("bKing") && getCurrentTurn().equals("b")) {
+            setbKing(getChessBoardTile(xN,yN));
+        }
+
+        PieceMovement.checkKing();
+        if(getCurrentTurn().equals("wh")) {
+            // Check if white piece can freely move
+            if (getWhiteCheck()) {
+                // Undo piece move as king in check
+                getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
+                if (piece.contains("King") && getChessBoardTile(xO,yO).getActionCommand().contains("whKing")) {
+                    setwhKing(getChessBoardTile(xO,yO));
+                }
+                if(!Objects.equals(getTempPiece(), ""))
+                {
+                    getChessBoardTile(xN,yN).setActionCommand(locationN+','+getTempPiece());
+                }
+                else
+                {
+                    getChessBoardTile(xN,yN).setActionCommand(locationN);
+                }
+                resetVars(locationNTile);
+                return false;
+            } else {
+                // Undo piece move as king in check
+                getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
+                if (piece.contains("King") && getChessBoardTile(xO,yO).getActionCommand().contains("whKing")) {
+                    setwhKing(getChessBoardTile(xO,yO));
+                }
+                if(!Objects.equals(getTempPiece(), ""))
+                {
+                    getChessBoardTile(xN,yN).setActionCommand(locationN+','+getTempPiece());
+                }
+                else
+                {
+                    getChessBoardTile(xN,yN).setActionCommand(locationN);
+                }
+                resetVars(locationNTile);
+                return true;
+            }
+        }
+        else if(getCurrentTurn().equals("b")) {
+            // Check if black piece can freely move
+            if ( getBlackCheck() ) {
+                // Undo piece move as king in check
+                getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
+                if (getMovingPiece().contains("King") && getChessBoardTile(xO,yO).getActionCommand().contains("bKing")) {
+                    setbKing(getChessBoardTile(xO,yO));
+                }
+                if(!Objects.equals(getTempPiece(), ""))
+                {
+                    getChessBoardTile(xN,yN).setActionCommand(locationN+getTempPiece());
+                }
+                else
+                {
+                    getChessBoardTile(xN,yN).setActionCommand(locationN);
+                }
+                resetVars(locationNTile);
+                return false;
+            } else {
+                getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
+                if (piece.contains("King") && getChessBoardTile(xO,yO).getActionCommand().contains("bKing")) {
+                    setbKing(getChessBoardTile(xO,yO));
+                }
+                if(!Objects.equals(getTempPiece(), ""))
+                {
+                    getChessBoardTile(xN,yN).setActionCommand(locationN+getTempPiece());
+                }
+                else
+                {
+                    getChessBoardTile(xN,yN).setActionCommand(locationN);
+                }
+                resetVars(locationNTile);
+                return true;
+            }
+        }
+        resetVars(locationNTile);
+        return false;
+    }
+
+    public static void resetVars(JButton locationNTile)
+    {
+        // Reset buffer and condition variables
+        setTempPiece("");
+        locationNTile.setBorder(UIManager.getBorder("Button.border"));
+        HighlightTiles.highlightSquareEmpty(getAvailableTiles(), getAvailableEnemyTiles());
     }
 }

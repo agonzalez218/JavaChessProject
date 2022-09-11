@@ -36,7 +36,6 @@ public class HighlightTiles extends Board {
         setAvailableTiles(new ArrayList<>());
         setAvailableEnemyTiles(new ArrayList<>());
         setCurrentTile(new JButton());
-        PieceMovement.checkKing();
     }
 
     // Highlights an enemy that can be taken
