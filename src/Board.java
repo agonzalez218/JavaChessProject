@@ -39,91 +39,65 @@ public class Board extends JFrame implements ActionListener {
     public static void setCurrentTile(JButton selectedTile) {
         currentTile = selectedTile;
     }
-
     public static JButton getCurrentTile() {
         return currentTile;
     }
-
     public static void setbKing(JButton king) {
         bKing = king;
     }
-
     public static JButton getbKing() {
         return bKing;
     }
-
     public static void setwhKing(JButton king) {
         whKing = king;
     }
-
     public static JButton getwhKing() {
         return whKing;
     }
-
     public static JButton[][] getChessBoard() {
         return chessBoard;
     }
-
     public static JButton getChessBoardTile(int x, int y) {
         return getChessBoard()[x][y];
     }
-
     public static void setChessBoardTile(int x, int y, JButton tile) {
         getChessBoard()[x][y] = tile;
     }
-
     public static void setAvailableTiles(List<JButton> list) {
         availableTiles = list;
     }
-
     public static List<JButton> getAvailableTiles() {
         return availableTiles;
     }
-
     public static void setAvailableEnemyTiles(List<JButton> list) {
         availableEnemyTiles = list;
     }
-
     public static List<JButton> getAvailableEnemyTiles() {
         return availableEnemyTiles;
     }
-
-    public static void setCurrentTurn(String team) {
-        teamTurn = team;
-    }
-
-    public static String getCurrentTurn() {
-        return teamTurn;
-    }
-
+    public static void setCurrentTurn(String team) {teamTurn = team;}
+    public static String getCurrentTurn() {return teamTurn;}
     public static void setWhiteCheck(Boolean check) {
         whiteCheck = check;
     }
-
     public static Boolean getWhiteCheck() {
         return whiteCheck;
     }
-
     public static void setBlackCheck(Boolean check) {
         blackCheck = check;
     }
-
     public static Boolean getBlackCheck() {
         return blackCheck;
     }
-
     public static void setPieceSelected(Boolean condition) {
         pieceSelected = condition;
     }
-
     public static Boolean getPieceSelected() {
         return pieceSelected;
     }
-
     public static void setTeamMoved(Boolean condition) {
         teamMoved = condition;
     }
-
     public static Boolean getTeamMoved() {
         return teamMoved;
     }
@@ -221,6 +195,7 @@ public class Board extends JFrame implements ActionListener {
 
         rbMenuItem = new JRadioButtonMenuItem("Default Board (Light Gray/White)");
         rbMenuItem.setMnemonic(KeyEvent.VK_D);
+        //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_D, InputEvent.ALT_MASK));
         rbMenuItem.addActionListener(this);
@@ -233,6 +208,7 @@ public class Board extends JFrame implements ActionListener {
 
         rbMenuItem = new JRadioButtonMenuItem("Tan Brown/Dark Brown");
         rbMenuItem.setMnemonic(KeyEvent.VK_T);
+        //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_T, InputEvent.ALT_MASK));
         rbMenuItem.addActionListener(this);
@@ -357,9 +333,6 @@ public class Board extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent ae) {
         String str = ae.getActionCommand();
-        //writeToDebugFile("Selected Piece: " + str);
-        //writeToDebugFile("Black King: " + getbKing().getActionCommand());
-        //writeToDebugFile("White King: " + getwhKing().getActionCommand());
         // Convert current (new) tile to matrix location
         int yN = (Character.getNumericValue(str.charAt(0)) - 8) * -1;
         int xN = str.charAt(1) - 65;
@@ -401,6 +374,8 @@ public class Board extends JFrame implements ActionListener {
             // Convert to matrix location
             if (PieceMovement.isValidMove(PieceMovement.getOriginalLocation(), newLocation, PieceMovement.getMovingPiece())) {
                 PieceMovement.movePiece(str, xN, yN);
+                PieceMovement.checkKing(getwhKing(), getbKing());
+                printBoard();
             }
             else
             {
@@ -413,7 +388,10 @@ public class Board extends JFrame implements ActionListener {
 
             if (Objects.equals(getCurrentTurn(), "b")) {
                 ChessAI.moveAIPiece(this);
+                PieceMovement.checkKing(getwhKing(), getbKing());
+                printBoard();
             }
+
         }
         // add reset buffers if no new piece selected
         else {
@@ -429,10 +407,25 @@ public class Board extends JFrame implements ActionListener {
         try {
             try(FileWriter fw = new FileWriter("debugFile.txt", true);
                 BufferedWriter writer = new BufferedWriter(fw)) {
-                writer.write(line+'\n');
+                writer.write(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void printBoard()
+    {
+        int i, j;
+        for( i = 0; i < 8; i++)
+        {
+            for( j = 0; j < 8; j++)
+            {
+                writeToDebugFile(getChessBoardTile(j, i).getActionCommand());
+                writeToDebugFile("   ");
+            }
+            writeToDebugFile("\n");
+        }
+        writeToDebugFile("\n");
     }
 }

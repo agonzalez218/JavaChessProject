@@ -34,6 +34,8 @@ public class HighlightTiles extends Board {
         }
         Board.getCurrentTile().setBorder(UIManager.getBorder("Button.border"));
 
+        highlightKingCheck();
+
         setAvailableTiles(new ArrayList<>());
         setAvailableEnemyTiles(new ArrayList<>());
         setCurrentTile(new JButton());

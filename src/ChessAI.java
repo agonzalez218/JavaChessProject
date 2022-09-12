@@ -83,7 +83,6 @@ public class ChessAI extends Board{
                     int yO = (Character.getNumericValue(firstTileInfo[0].charAt(0))-8)*-1;
                     int xO = firstTileInfo[0].charAt(1)-65;
                     PieceMovement.determinePossibleMoves(firstTileInfo[1], yO, xO);
-                    System.out.println("Inital: " + getAvailableEnemyTiles().size());
                     for(JButton tile : getAvailableTiles())
                     {
                         Move possibleMove = new Move();
@@ -96,7 +95,6 @@ public class ChessAI extends Board{
                             getAvailableMoves().add(possibleMove);
                         }
                     }
-                    System.out.println("Current: " + getAvailableEnemyTiles().size());
                     for( JButton tile : getAvailableEnemyTiles() )
                     {
                         Move possibleMove = new Move();

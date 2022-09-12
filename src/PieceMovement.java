@@ -1,22 +1,21 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class PieceMovement extends Board{
 
-    static String movingPiece, tempPiece, originalLocation;
+    static String movingPiece, originalLocation;
 
     // Getters and Setters
     public static void setMovingPiece(String piece) { movingPiece = piece; }
     public static String getMovingPiece(){return movingPiece;}
-    public static void setTempPiece(String piece) { tempPiece = piece; }
-    public static String getTempPiece(){return tempPiece;}
     public static void setOriginalLocation(String location) { originalLocation = location; }
     public static String getOriginalLocation(){return originalLocation;}
 
     public static void determinePossibleMoves(String chessPieceOrig, int y, int x)
     {
+        setAvailableTiles(new ArrayList<>());
+        setAvailableEnemyTiles(new ArrayList<>());
         String teamColor, chessPiece;
         if( chessPieceOrig.contains("wh") )
         {
@@ -141,55 +140,55 @@ public class PieceMovement extends Board{
             case "Pawn":
                 if(teamColor.equals("b")) {
                     // If end of board, or enemy/ally no more movement allowed
-                    if( y < 7 && !(getChessBoard()[x][y+1].getActionCommand().contains("b")) && !(getChessBoard()[x][y+1].getActionCommand().contains("wh")))
+                    if( y < 7 && (getChessBoard()[x][y+1].getActionCommand().length() == 2 ))
                     {
                         // First move can be two tiles up
-                        if (y == 1 && !(getChessBoard()[x][y+2].getActionCommand().contains("wh"))) {
-                            getAvailableTiles().add(getChessBoard()[x][y + 2]);
+                        if (y == 1 && (getChessBoardTile(x,y+2).getActionCommand().length() == 2)) {
+                            getAvailableTiles().add(getChessBoardTile(x,y+2));
                         }
-                        getAvailableTiles().add(getChessBoard()[x][y + 1]);
+                        getAvailableTiles().add(getChessBoardTile(x,y+1));
                     }
                     // If there is an enemy tile to the right
                     if( x < 7 && y < 7 )
                     {
-                        if( getChessBoard()[x+1][y+1].getActionCommand().contains("wh"))
+                        if( getChessBoardTile(x+1,y+1).getActionCommand().contains("wh"))
                         {
-                            getAvailableEnemyTiles().add(getChessBoard()[x+1][y+1]);
+                            getAvailableEnemyTiles().add(getChessBoardTile(x+1,y+1));
                         }
                     }
                     // If there is an enemy tile to the left
                     if( x > 0 && y < 7 )
                     {
-                        if( getChessBoard()[x-1][y+1].getActionCommand().contains("wh"))
+                        if( getChessBoardTile(x-1,y+1).getActionCommand().contains("wh"))
                         {
-                            getAvailableEnemyTiles().add(getChessBoard()[x-1][y+1]);
+                            getAvailableEnemyTiles().add(getChessBoardTile(x-1,y+1));
                         }
                     }
                 }
                 else if(teamColor.equals("wh")) {
                     // If end of board, or enemy/ally no more movement allowed
-                    if( y > 0 && !(getChessBoard()[x][y-1].getActionCommand().contains("b")) && !(getChessBoard()[x][y-1].getActionCommand().contains("wh")))
+                    if( y > 0 && (getChessBoard()[x][y-1].getActionCommand().length() == 2 ))
                     {
                         // First move can be two tiles up
-                        if (y == 6 && !(getChessBoard()[x][y-2].getActionCommand().contains("b"))) {
-                            getAvailableTiles().add(getChessBoard()[x][y - 2]);
+                        if (y == 6 && (getChessBoardTile(x,y-2).getActionCommand().length() == 2)) {
+                            getAvailableTiles().add(getChessBoardTile(x,y-2));
                         }
-                        getAvailableTiles().add(getChessBoard()[x][y - 1]);
+                        getAvailableTiles().add(getChessBoardTile(x,y-1));
                     }
                     // If there is an enemy tile to the left
                     if( x > 0 && y > 0)
                     {
-                        if( getChessBoard()[x-1][y-1].getActionCommand().contains("b"))
+                        if( getChessBoardTile(x-1,y-1).getActionCommand().contains("b"))
                         {
-                            getAvailableEnemyTiles().add(getChessBoard()[x-1][y-1]);
+                            getAvailableEnemyTiles().add(getChessBoardTile(x-1,y-1));
                         }
                     }
                     // If there is an enemy tile to the right
                     if( x < 7 && y > 0)
                     {
-                        if( getChessBoard()[x+1][y-1].getActionCommand().contains("b"))
+                        if( getChessBoardTile(x+1,y-1).getActionCommand().contains("b"))
                         {
-                            getAvailableEnemyTiles().add(getChessBoard()[x+1][y-1]);
+                            getAvailableEnemyTiles().add(getChessBoardTile(x+1,y-1));
                         }
                     }
                 }
@@ -200,50 +199,50 @@ public class PieceMovement extends Board{
     // Determine if given space is available for knight
     public static void knightMovement(int x, int y, String enemy, String ally)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoardTile(x,y).getActionCommand().contains(ally))
         {
             return;
         }
-        if( getChessBoard()[x][y].getActionCommand().contains(enemy))
+        if( getChessBoardTile(x,y).getActionCommand().contains(enemy))
         {
-            getAvailableEnemyTiles().add(getChessBoard()[x][y]);
+            getAvailableEnemyTiles().add(getChessBoardTile(x,y));
             return;
         }
-        getAvailableTiles().add(getChessBoard()[x][y]);
+        getAvailableTiles().add(getChessBoardTile(x,y));
     }
 
     // Recursively find next diagonal movement available
     public static void diagonalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
     {
-        if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally))
+        if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoardTile(x,y).getActionCommand().contains(ally))
         {
             return;
         }
-        if( getChessBoard()[x][y].getActionCommand().contains(enemy))
+        if( getChessBoardTile(x,y).getActionCommand().contains(enemy))
         {
-            getAvailableEnemyTiles().add(getChessBoard()[x][y]);
+            getAvailableEnemyTiles().add(getChessBoardTile(x,y));
             return;
         }
         if( x == 0 || y == 0 || x == 7 || y == 7 || isKing)
         {
-            getAvailableTiles().add(getChessBoard()[x][y]);
+            getAvailableTiles().add(getChessBoardTile(x,y));
             return;
         }
         switch (dir) {
             case 1 -> {
-                getAvailableTiles().add(getChessBoard()[x][y]);
+                getAvailableTiles().add(getChessBoardTile(x,y));
                 diagonalMovement(x+1, y+1, dir, enemy, ally, false);
             }
             case 2 -> {
-                getAvailableTiles().add(getChessBoard()[x][y]);
+                getAvailableTiles().add(getChessBoardTile(x,y));
                 diagonalMovement(x-1, y+1, dir, enemy, ally, false);
             }
             case 3 -> {
-                getAvailableTiles().add(getChessBoard()[x][y]);
+                getAvailableTiles().add(getChessBoardTile(x,y));
                 diagonalMovement(x+1, y-1, dir, enemy, ally, false);
             }
             case 4 -> {
-                getAvailableTiles().add(getChessBoard()[x][y]);
+                getAvailableTiles().add(getChessBoardTile(x,y));
                 diagonalMovement(x-1, y-1, dir, enemy, ally, false);
             }
         }
@@ -405,6 +404,7 @@ public class PieceMovement extends Board{
 
     public static void savePiece(String chessPiece)
     {
+        setMovingPiece("");
         String[] arrOfStr = chessPiece.split(",");
         setOriginalLocation(arrOfStr[0]);
         setMovingPiece(arrOfStr[1]);
@@ -430,6 +430,7 @@ public class PieceMovement extends Board{
 
         getChessBoardTile(xO,yO).setActionCommand(getOriginalLocation());
         getChessBoardTile(xN,yN).setActionCommand(newLocation+','+getMovingPiece());
+
         if (getMovingPiece().contains("whKing") && getCurrentTurn().equals("wh")) {
              getwhKing().setBorder(UIManager.getBorder("Button.border"));
              setwhKing(getChessBoardTile(xN,yN));
@@ -444,9 +445,9 @@ public class PieceMovement extends Board{
         getChessBoardTile(xO,yO).setIcon(null);
         addIconToButton(s + getMovingPiece() + ".png", getChessBoardTile(xN,yN));
 
-        setOriginalLocation("");
-        setMovingPiece("");
-        setTempPiece("");
+
+        setOriginalLocation(null);
+        setMovingPiece(null);
         setPieceSelected(false);
         setTeamMoved(false);
         PieceMovement.checkKing(getwhKing(), getbKing());
@@ -462,15 +463,11 @@ public class PieceMovement extends Board{
         int xO = locationO.charAt(1)-65;
         int yN = (Character.getNumericValue(locationN.charAt(0))-8)*-1;
         int xN = locationN.charAt(1)-65;
-        JButton locationNTile = getChessBoardTile(xN, yN);
+        String originalPieceAction = getChessBoardTile(xO,yO).getActionCommand();
+        String newPieceAction = getChessBoardTile(xN,yN).getActionCommand();
 
         // Clear action command to just contain location and no image
         getChessBoardTile(xO,yO).setActionCommand(locationO);
-
-        if(getChessBoardTile(xN,yN).getActionCommand().length() > 2)
-        {
-            setTempPiece(getChessBoardTile(xN,yN).getActionCommand().substring(2));
-        }
 
         // Set new button to contain chess piece and location
         getChessBoardTile(xN,yN).setActionCommand(locationN+','+piece);
@@ -480,39 +477,24 @@ public class PieceMovement extends Board{
             PieceMovement.checkKing(getwhKing(), getChessBoardTile(xN, yN));
         }
 
-        if(getChessBoardTile(xN,yN).getActionCommand().contains("whKing") )
+        else if(getChessBoardTile(xN,yN).getActionCommand().contains("whKing") )
         {
             PieceMovement.checkKing(getChessBoardTile(xN, yN), getbKing());
         }
-
+        else
+        {
+            PieceMovement.checkKing(getwhKing(), getbKing());
+        }
 
         if(getCurrentTurn().equals("wh")) {
             // Check if white piece can freely move
             if (getWhiteCheck()) {
                 // Undo piece move as king in check
-                getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
-                if(!Objects.equals(getTempPiece(), ""))
-                {
-                    getChessBoardTile(xN,yN).setActionCommand(locationN+','+getTempPiece());
-                }
-                else
-                {
-                    getChessBoardTile(xN,yN).setActionCommand(locationN);
-                }
-                resetVars(locationNTile);
+                resetVars( originalPieceAction, newPieceAction, xO, yO, xN, yN);
                 return false;
             } else {
                 // Undo piece move as king in check
-                getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
-                if(!Objects.equals(getTempPiece(), ""))
-                {
-                    getChessBoardTile(xN,yN).setActionCommand(locationN+','+getTempPiece());
-                }
-                else
-                {
-                    getChessBoardTile(xN,yN).setActionCommand(locationN);
-                }
-                resetVars(locationNTile);
+                resetVars( originalPieceAction, newPieceAction, xO, yO, xN, yN);
                 return true;
             }
         }
@@ -520,40 +502,21 @@ public class PieceMovement extends Board{
             // Check if black piece can freely move
             if ( getBlackCheck() ) {
                 // Undo piece move as king in check
-                getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
-                if(!Objects.equals(getTempPiece(), ""))
-                {
-                    getChessBoardTile(xN,yN).setActionCommand(locationN+getTempPiece());
-                }
-                else
-                {
-                    getChessBoardTile(xN,yN).setActionCommand(locationN);
-                }
-                resetVars(locationNTile);
+                resetVars( originalPieceAction, newPieceAction, xO, yO, xN, yN);
                 return false;
             } else {
-                getChessBoardTile(xO,yO).setActionCommand(locationO + ',' + piece);
-                if(!Objects.equals(getTempPiece(), ""))
-                {
-                    getChessBoardTile(xN,yN).setActionCommand(locationN+getTempPiece());
-                }
-                else
-                {
-                    getChessBoardTile(xN,yN).setActionCommand(locationN);
-                }
-                resetVars(locationNTile);
+                resetVars( originalPieceAction, newPieceAction, xO, yO, xN, yN);
                 return true;
             }
         }
-        resetVars(locationNTile);
+        PieceMovement.checkKing(getwhKing(), getbKing());
         return false;
     }
 
-    public static void resetVars(JButton locationNTile)
+    public static void resetVars(String locationO, String locationN, int xO, int yO, int xN, int yN )
     {
-        // Reset buffer and condition variables
-        setTempPiece("");
-        locationNTile.setBorder(UIManager.getBorder("Button.border"));
+        getChessBoardTile(xO,yO).setActionCommand(locationO);
+        getChessBoardTile(xN,yN).setActionCommand(locationN);
         PieceMovement.checkKing(getwhKing(), getbKing());
     }
 }
