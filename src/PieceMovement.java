@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class PieceMovement extends Board{
@@ -398,6 +399,8 @@ public class PieceMovement extends Board{
         checkSpaces(xOwh-1, yOwh-1, 6, "b", "wh");
         checkSpaces(xOwh+1, yOwh-1, 7, "b", "wh");
         checkSpaces(xOwh-1, yOwh+1, 8, "b", "wh");
+
+        HighlightTiles.highlightKingCheck();
     }
 
     public static void savePiece(String chessPiece)
@@ -449,7 +452,6 @@ public class PieceMovement extends Board{
         PieceMovement.checkKing(getwhKing(), getbKing());
         HighlightTiles.highlightSquareEmpty(getAvailableTiles(), getAvailableEnemyTiles());
 
-
         if( getCurrentTurn().equals("b") ) { setCurrentTurn("wh"); }
         else { setCurrentTurn("b"); }
     }
@@ -473,7 +475,17 @@ public class PieceMovement extends Board{
         // Set new button to contain chess piece and location
         getChessBoardTile(xN,yN).setActionCommand(locationN+','+piece);
 
-        PieceMovement.checkKing(getwhKing(), getbKing());
+        if(getChessBoardTile(xN,yN).getActionCommand().contains("bKing") )
+        {
+            PieceMovement.checkKing(getwhKing(), getChessBoardTile(xN, yN));
+        }
+
+        if(getChessBoardTile(xN,yN).getActionCommand().contains("whKing") )
+        {
+            PieceMovement.checkKing(getChessBoardTile(xN, yN), getbKing());
+        }
+
+
         if(getCurrentTurn().equals("wh")) {
             // Check if white piece can freely move
             if (getWhiteCheck()) {
@@ -542,6 +554,6 @@ public class PieceMovement extends Board{
         // Reset buffer and condition variables
         setTempPiece("");
         locationNTile.setBorder(UIManager.getBorder("Button.border"));
-        HighlightTiles.highlightSquareEmpty(getAvailableTiles(), getAvailableEnemyTiles());
+        PieceMovement.checkKing(getwhKing(), getbKing());
     }
 }

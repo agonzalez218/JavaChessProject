@@ -28,7 +28,7 @@ public class ChessAI extends Board{
     public static Move selectMove(Board board){
         generateAllMoves();
         int random_int = (int) ((Math.random() * (getAvailableMoves().size()-1)));
-        System.out.println("Available Moves: " + getAvailableMoves().size());
+        //writeToDebugFile("Available Moves: " + getAvailableMoves().size());
         if( getAvailableMoves().size() == 0 )
         {
             board.endGame();
@@ -49,7 +49,7 @@ public class ChessAI extends Board{
             }
             setOriginalTile(chosenMove.OriginalLocation+','+chosenMove.movingChessPiece);
             setNewTile(chosenMove.NewLocation);
-            System.out.println("AI Chosen Move: " + getOriginalTile() + " > " + getNewTile());
+            //writeToDebugFile("AI Chosen Move: " + getOriginalTile() + " > " + getNewTile());
             String movingTile = getOriginalTile();
 
             // Select original piece
@@ -83,6 +83,7 @@ public class ChessAI extends Board{
                     int yO = (Character.getNumericValue(firstTileInfo[0].charAt(0))-8)*-1;
                     int xO = firstTileInfo[0].charAt(1)-65;
                     PieceMovement.determinePossibleMoves(firstTileInfo[1], yO, xO);
+                    System.out.println("Inital: " + getAvailableEnemyTiles().size());
                     for(JButton tile : getAvailableTiles())
                     {
                         Move possibleMove = new Move();
@@ -90,11 +91,12 @@ public class ChessAI extends Board{
                         possibleMove.movingChessPiece = firstTileInfo[1];
                         possibleMove.NewLocation = tile.getActionCommand();
                         possibleMove.pointValue = 0;
-                        //if( PieceMovement.isValidMove(possibleMove.OriginalLocation, possibleMove.NewLocation, possibleMove.movingChessPiece) )
+                        if( PieceMovement.isValidMove(possibleMove.OriginalLocation, possibleMove.NewLocation, possibleMove.movingChessPiece) )
                         {
                             getAvailableMoves().add(possibleMove);
                         }
                     }
+                    System.out.println("Current: " + getAvailableEnemyTiles().size());
                     for( JButton tile : getAvailableEnemyTiles() )
                     {
                         Move possibleMove = new Move();
