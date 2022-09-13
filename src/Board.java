@@ -246,7 +246,7 @@ public class Board extends JFrame implements ActionListener {
         rbMenuItem.setMnemonic(KeyEvent.VK_B);
         //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_D, InputEvent.ALT_MASK));
+                KeyEvent.VK_B, InputEvent.ALT_MASK));
         rbMenuItem.addActionListener(this);
         if (Objects.equals(HighlightTiles.getAIColor(), "b")) {
             rbMenuItem.setSelected(true);
@@ -259,7 +259,7 @@ public class Board extends JFrame implements ActionListener {
         rbMenuItem.setMnemonic(KeyEvent.VK_W);
         //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_T, InputEvent.ALT_MASK));
+                KeyEvent.VK_W, InputEvent.ALT_MASK));
         rbMenuItem.addActionListener(this);
         if (Objects.equals(HighlightTiles.getAIColor(), "wh")) {
             rbMenuItem.setSelected(true);
@@ -268,19 +268,19 @@ public class Board extends JFrame implements ActionListener {
         AIMenu.add(rbMenuItem);
 
         rbMenuItem = new JRadioButtonMenuItem("Auto");
-        rbMenuItem.setMnemonic(KeyEvent.VK_W);
+        rbMenuItem.setMnemonic(KeyEvent.VK_U);
         //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_T, InputEvent.ALT_MASK));
+                KeyEvent.VK_U, InputEvent.ALT_MASK));
         rbMenuItem.addActionListener(this);
         group.add(rbMenuItem);
         AIMenu.add(rbMenuItem);
 
         rbMenuItem = new JRadioButtonMenuItem("None");
-        rbMenuItem.setMnemonic(KeyEvent.VK_W);
+        rbMenuItem.setMnemonic(KeyEvent.VK_N);
         //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_T, InputEvent.ALT_MASK));
+                KeyEvent.VK_N, InputEvent.ALT_MASK));
         rbMenuItem.addActionListener(this);
         if (Objects.equals(HighlightTiles.getAIColor(), "n")) {
             rbMenuItem.setSelected(true);
@@ -529,6 +529,7 @@ public class Board extends JFrame implements ActionListener {
             if (PieceMovement.isValidMove(PieceMovement.getOriginalLocation(), str, PieceMovement.getMovingPiece())) {
                 PieceMovement.movePiece(str, xN, yN);
                 PieceMovement.checkKing(getwhKing(), getbKing());
+                printBoard();
             }
             // If not a valid move, reset variables
             else
@@ -543,6 +544,7 @@ public class Board extends JFrame implements ActionListener {
             if (Objects.equals(getCurrentTurn(), AIColor)) {
                 ChessAI.moveAIPiece(this);
                 PieceMovement.checkKing(getwhKing(), getbKing());
+                printBoard();
             }
 
         }

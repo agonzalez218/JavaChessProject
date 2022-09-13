@@ -1,7 +1,6 @@
+import javax.annotation.processing.SupportedSourceVersion;
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /*
 Author: Abel Gonzalez
@@ -34,11 +33,23 @@ public class ChessAI extends Board{
     Description:
         Returns an array containing the Matrix location of New Tile Location ( 0 being Y and 1 being X )
      */
-    public static int[] getNewTileArr(){
+    public static int[] getTileArr(String tile){
         int[] arrLocation = new int[2];
-        arrLocation[1] = (Character.getNumericValue(newTile.charAt(0))-8)*-1 ;
-        arrLocation[0] = newTile.charAt(1)-65;
+        arrLocation[1] = (Character.getNumericValue(tile.charAt(0))-8)*-1 ;
+        arrLocation[0] = tile.charAt(1)-65;
         return arrLocation;
+    }
+
+    /*
+   Description:
+       Sorts Available Moves by their point value
+    */
+    static class sortByPoints implements Comparator<Move> {
+        // Sorting in ascending order of points
+        public int compare(Move a, Move b)
+        {
+            return Integer.compare(a.pointValue, b.pointValue);
+        }
     }
 
     /*
@@ -53,9 +64,9 @@ public class ChessAI extends Board{
         If the AI runs out of moves, it ends the game.
      */
     public static Move selectMove(Board board){
-        int max = 0, index = 0;
-        generateAllMoves();
-        int random_int = (int) ((Math.random() * (getAvailableMoves().size()-1)));
+        int max, min = 0;
+        generateAllMoves(getAIColor());
+        Comparator<Move> pointValueSorter;
 
         // End game if no moves left
         if( getAvailableMoves().size() == 0 )
@@ -64,22 +75,27 @@ public class ChessAI extends Board{
             return null;
         }
 
-        // Iterate through available moves to find best move
-        for( Move move : getAvailableMoves() )
-        {
-            if( move.pointValue > max )
-            {
-                max = move.pointValue;
-                index = getAvailableMoves().indexOf(move);
-            }
+        // Sort list by point value
+        availableMoves.sort(new sortByPoints());
+        max = getAvailableMoves().size()-1;
+
+        for(Move tile : getAvailableMoves()) {
+            System.out.println(tile.pointValue);
         }
 
-        // If no good moves found, return random one
-        if( max == 0 )
+        // Return highest point value move
+        if(availableMoves.get(availableMoves.size()-1).pointValue == 0)
         {
+            for(Move m : getAvailableMoves()) {
+                if( m.pointValue < 0 ) {
+                    min++;
+                }
+            }
+
+            int random_int = min + (int)(Math.random() * ((max - min) + 1));
             return availableMoves.get(random_int);
         }
-        return availableMoves.get(index);
+        return availableMoves.get(availableMoves.size()-1);
     }
 
     /*
@@ -109,7 +125,7 @@ public class ChessAI extends Board{
             if( movingTile.length() > 2 && !getPieceSelected() && ((getCurrentTurn().equals(getAIColor()) && movingTile.contains(getAIColor())) ))
             {
                 PieceMovement.savePiece(movingTile);
-                int[] newPieceLocation = getNewTileArr();
+                int[] newPieceLocation = getTileArr(getNewTile());
                 // Move piece
                 if( getPieceSelected() && (getAvailableTiles().contains(getChessBoardTile(newPieceLocation[0],newPieceLocation[1])) || getAvailableEnemyTiles().contains(getChessBoardTile(newPieceLocation[0],newPieceLocation[1]))))
                 {
@@ -125,6 +141,7 @@ public class ChessAI extends Board{
                             setwhKing(getChessBoardTile(newPieceLocation[0],newPieceLocation[1]));
                         }
                     }
+                    System.out.println(chosenMove.SourceLocation + " > " + chosenMove.DestinationLocation);
                     PieceMovement.movePiece(getNewTile(), newPieceLocation[0], newPieceLocation[1]);
                     PieceMovement.checkKing(getwhKing(), getbKing());
 
@@ -139,7 +156,7 @@ public class ChessAI extends Board{
 
     /*
    Parameters:
-       N/A
+       String teamColor: string containing the color of the current user's team
    Return Value:
        Return: Void
    Description:
@@ -148,10 +165,17 @@ public class ChessAI extends Board{
        added to available moves with the Move type that contains source, destination,
        moving piece and point value.
     */
-    public static void generateAllMoves(){
+    public static void generateAllMoves(String teamColor){
+        String enemyTeam;
+        if(Objects.equals(teamColor, "wh")) {enemyTeam = "b";}
+        else{enemyTeam = "wh";}
+
+        List <JButton> tempMoveList;
+        List <JButton> tempEnemyList;
+
         for (JButton[] jButtonRow : getChessBoard()) {
             for (JButton jButton: jButtonRow){
-                if( jButton.getActionCommand().contains(getAIColor()))
+                if( jButton.getActionCommand().contains(teamColor))
                 {
                     String[] firstTileInfo = jButton.getActionCommand().split(",");
                     int yO = (Character.getNumericValue(firstTileInfo[0].charAt(0))-8)*-1;
@@ -169,6 +193,26 @@ public class ChessAI extends Board{
                         possibleMove.pointValue = 0;
                         if( PieceMovement.isValidMove(possibleMove.SourceLocation, possibleMove.DestinationLocation, possibleMove.movingChessPiece) )
                         {
+
+                            // Save temp copy of lists
+                            tempMoveList = getAvailableTiles();
+                            tempEnemyList = getAvailableEnemyTiles();
+                            setAvailableTiles(new ArrayList<>());
+                            setAvailableEnemyTiles(new ArrayList<>());
+                            int []sourceArrLoc = getTileArr(possibleMove.SourceLocation);
+                            int []destArrLoc = getTileArr(possibleMove.DestinationLocation);
+
+                            getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]).setActionCommand(possibleMove.SourceLocation);
+                            getChessBoardTile(destArrLoc[0],destArrLoc[1]).setActionCommand(possibleMove.DestinationLocation.substring(0,2) + "," + possibleMove.movingChessPiece);
+
+                            possibleMove.pointValue -= determineMaxLoss(enemyTeam);
+
+                            // Reset temp variables to before move
+                            getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]).setActionCommand(possibleMove.SourceLocation + "," + possibleMove.movingChessPiece);
+                            getChessBoardTile(destArrLoc[0],destArrLoc[1]).setActionCommand(possibleMove.DestinationLocation);
+                            setAvailableTiles(tempMoveList);
+                            setAvailableEnemyTiles(tempEnemyList);
+
                             // Add move to list if valid
                             getAvailableMoves().add(possibleMove);
                         }
@@ -188,7 +232,28 @@ public class ChessAI extends Board{
                             else if(possibleMove.DestinationLocation.contains("Queen")){possibleMove.pointValue = 90;}
                             else if(possibleMove.DestinationLocation.contains("King")){possibleMove.pointValue = 900;}
                             else{possibleMove.pointValue = 0;}
+
+                            // Save temp copy of lists
+                            tempMoveList = getAvailableTiles();
+                            tempEnemyList = getAvailableEnemyTiles();
+                            setAvailableTiles(new ArrayList<>());
+                            setAvailableEnemyTiles(new ArrayList<>());
+                            int []sourceArrLoc = getTileArr(possibleMove.SourceLocation);
+                            int []destArrLoc = getTileArr(possibleMove.DestinationLocation);
+
+                            getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]).setActionCommand(possibleMove.SourceLocation);
+                            getChessBoardTile(destArrLoc[0],destArrLoc[1]).setActionCommand(possibleMove.DestinationLocation.substring(0,2) + "," + possibleMove.movingChessPiece);
+
+                            possibleMove.pointValue -= determineMaxLoss(enemyTeam);
+
+                            // Reset temp variables to before move
+                            getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]).setActionCommand(possibleMove.SourceLocation + "," + possibleMove.movingChessPiece);
+                            getChessBoardTile(destArrLoc[0],destArrLoc[1]).setActionCommand(possibleMove.DestinationLocation);
+                            setAvailableTiles(tempMoveList);
+                            setAvailableEnemyTiles(tempEnemyList);
+
                             // Add move to list if valid
+
                             getAvailableMoves().add(possibleMove);
                         }
                     }
@@ -199,5 +264,61 @@ public class ChessAI extends Board{
                 }
             }
         }
+    }
+
+    /*
+   Parameters:
+       String teamColor: string containing the color of the current user's team
+   Return Value:
+       Return: int value with max point move by enemy player
+   Description:
+       Generates all possible moves by iterating through all tiles in the chess board and
+       determining all possible moves with AI's team color. If moves are possible, they are
+       added to available moves with the Move type that contains source, destination,
+       moving piece and point value.
+    */
+    public static int determineMaxLoss(String teamColor){
+        int max = 0;
+
+        for (JButton[] jButtonRow : getChessBoard()) {
+            for (JButton jButton: jButtonRow){
+                if( jButton.getActionCommand().contains(teamColor))
+                {
+                    String[] firstTileInfo = jButton.getActionCommand().split(",");
+                    int yO = (Character.getNumericValue(firstTileInfo[0].charAt(0))-8)*-1;
+                    int xO = firstTileInfo[0].charAt(1)-65;
+
+                    // Determine all possible moves from source piece
+                    PieceMovement.determinePossibleMoves(firstTileInfo[1], yO, xO);
+                    for( JButton tile : getAvailableEnemyTiles() )
+                    {
+                        Move possibleMove = new Move();
+                        possibleMove.SourceLocation = firstTileInfo[0];
+                        possibleMove.movingChessPiece = firstTileInfo[1];
+                        possibleMove.DestinationLocation = tile.getActionCommand();
+                        if( PieceMovement.isValidMove(possibleMove.SourceLocation, possibleMove.DestinationLocation, possibleMove.movingChessPiece))
+                        {
+                            // Assigns point value based on piece taken
+                            if(possibleMove.DestinationLocation.contains("Pawn")){possibleMove.pointValue = 10;}
+                            else if(possibleMove.DestinationLocation.contains("Knight")||possibleMove.DestinationLocation.contains("Bishop")){possibleMove.pointValue = 30;}
+                            else if(possibleMove.DestinationLocation.contains("Rook")){possibleMove.pointValue = 50;}
+                            else if(possibleMove.DestinationLocation.contains("Queen")){possibleMove.pointValue = 90;}
+                            else if(possibleMove.DestinationLocation.contains("King")){possibleMove.pointValue = 900;}
+                            else{possibleMove.pointValue = 0;}
+                            // Add move to list if valid
+                            if( max < possibleMove.pointValue )
+                            {
+                                max = possibleMove.pointValue;
+                            }
+                        }
+                    }
+                    // Reset lists after every move
+                    setAvailableTiles(new ArrayList<>());
+                    setAvailableEnemyTiles(new ArrayList<>());
+                }
+            }
+        }
+
+        return max;
     }
 }
