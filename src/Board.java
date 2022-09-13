@@ -212,6 +212,7 @@ public class Board extends JFrame implements ActionListener {
 
         rbMenuItem = new JRadioButtonMenuItem("Default Board (Light Gray/White)");
         rbMenuItem.setMnemonic(KeyEvent.VK_D);
+        // Adds shortcut text
         //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_D, InputEvent.ALT_MASK));
@@ -225,6 +226,7 @@ public class Board extends JFrame implements ActionListener {
 
         rbMenuItem = new JRadioButtonMenuItem("Tan Brown/Dark Brown");
         rbMenuItem.setMnemonic(KeyEvent.VK_T);
+        // Adds shortcut text
         //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_T, InputEvent.ALT_MASK));
@@ -244,6 +246,7 @@ public class Board extends JFrame implements ActionListener {
 
         rbMenuItem = new JRadioButtonMenuItem("Default Team (Black)");
         rbMenuItem.setMnemonic(KeyEvent.VK_B);
+        // Adds shortcut text
         //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_B, InputEvent.ALT_MASK));
@@ -257,6 +260,7 @@ public class Board extends JFrame implements ActionListener {
 
         rbMenuItem = new JRadioButtonMenuItem("White Team");
         rbMenuItem.setMnemonic(KeyEvent.VK_W);
+        // Adds shortcut text
         //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_W, InputEvent.ALT_MASK));
@@ -269,6 +273,7 @@ public class Board extends JFrame implements ActionListener {
 
         rbMenuItem = new JRadioButtonMenuItem("Auto");
         rbMenuItem.setMnemonic(KeyEvent.VK_U);
+        // Adds shortcut text
         //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_U, InputEvent.ALT_MASK));
@@ -278,6 +283,7 @@ public class Board extends JFrame implements ActionListener {
 
         rbMenuItem = new JRadioButtonMenuItem("None");
         rbMenuItem.setMnemonic(KeyEvent.VK_N);
+        // Adds shortcut text
         //noinspection deprecation
         rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_N, InputEvent.ALT_MASK));
@@ -450,25 +456,37 @@ public class Board extends JFrame implements ActionListener {
         int yN = (Character.getNumericValue(str.charAt(0)) - 8) * -1;
         int xN = str.charAt(1) - 65;
 
-        boolean loop = str.equals("Auto");
-
-        while(loop)
-        {
-            setAIColor("wh");
-            ChessAI.moveAIPiece(this);
-            if(getWhiteCheck() || getBlackCheck())
-            {
-                loop=false;
-            }
-            setAIColor("b");
-            ChessAI.moveAIPiece(this);
-            if(getWhiteCheck() || getBlackCheck())
-            {
-                loop=false;
-            }
-        }
-
         switch (str) {
+            case "Exit Game" -> System.exit(0);
+            case "Restart Game" -> {
+                Board b = new Board();
+                this.setVisible(false);
+                b.setVisible(true);
+                return;
+            }
+            case "Concede" -> {
+                endGame();
+                return;
+            }
+            case "Auto" -> {
+                boolean loop = true;
+                while(loop)
+                {
+                    setAIColor("wh");
+                    ChessAI.moveAIPiece(this);
+                    if(getWhiteCheck() || getBlackCheck())
+                    {
+                        loop=false;
+                    }
+                    setAIColor("b");
+                    ChessAI.moveAIPiece(this);
+                    if(getWhiteCheck() || getBlackCheck())
+                    {
+                        loop=false;
+                    }
+                }
+                return;
+            }
             case "None" -> {
                 setAIColor("n");
                 return;
@@ -501,17 +519,6 @@ public class Board extends JFrame implements ActionListener {
                 HighlightTiles.changeChessBoardBackground();
                 return;
             }
-            case "Exit Game" -> System.exit(0);
-            case "Restart Game" -> {
-                Board b = new Board();
-                this.setVisible(false);
-                b.setVisible(true);
-                return;
-            }
-            case "Concede" -> {
-                endGame();
-                return;
-            }
         }
 
         // Select original piece
@@ -529,7 +536,6 @@ public class Board extends JFrame implements ActionListener {
             if (PieceMovement.isValidMove(PieceMovement.getOriginalLocation(), str, PieceMovement.getMovingPiece())) {
                 PieceMovement.movePiece(str, xN, yN);
                 PieceMovement.checkKing(getwhKing(), getbKing());
-                printBoard();
             }
             // If not a valid move, reset variables
             else
@@ -544,7 +550,6 @@ public class Board extends JFrame implements ActionListener {
             if (Objects.equals(getCurrentTurn(), AIColor)) {
                 ChessAI.moveAIPiece(this);
                 PieceMovement.checkKing(getwhKing(), getbKing());
-                printBoard();
             }
 
         }
@@ -560,11 +565,9 @@ public class Board extends JFrame implements ActionListener {
     /*
    Parameters:
        String line: Line to be written to debug file
-   Return Value:
-       Return: Void
    Description:
        Used for debugging; writes a given line to debug file
-    */
+
     public static void writeToDebugFile(String line) {
         try {
             try(FileWriter fw = new FileWriter("debugFile.txt", true);
@@ -576,14 +579,9 @@ public class Board extends JFrame implements ActionListener {
         }
     }
 
-    /*
-   Parameters:
-        N/A
-   Return Value:
-       Return: Void
    Description:
        Uses writeToDebugFile function to print board to debugFile
-    */
+
     public static void printBoard()
     {
         int i, j;
@@ -597,5 +595,5 @@ public class Board extends JFrame implements ActionListener {
             writeToDebugFile("\n");
         }
         writeToDebugFile("\n");
-    }
+    }*/
 }
