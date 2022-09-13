@@ -2,6 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+/*
+Author: Abel Gonzalez
+Project Title: Chess Project in Java
+Date: September 2022
+Description of File: This file holds the necessary functions and variables responsible for moving a piece
+    as well as determining what moves are possible.
+ */
+
 public class PieceMovement extends Board{
 
     static String movingPiece, originalLocation;
@@ -12,10 +20,24 @@ public class PieceMovement extends Board{
     public static void setOriginalLocation(String location) { originalLocation = location; }
     public static String getOriginalLocation(){return originalLocation;}
 
+    /*
+   Parameters:
+       String chessPieceOrig: Moving Chess Piece from source tile
+       int x: Knight's x (row location) in Array Matrix
+       int y: Knight's y (column location) in Array Matrix
+   Return Value:
+       Return: Void
+   Description:
+       Uses movement of piece to determine possible moves from current location.
+       If movement found and no piece on tile, add to available tiles.
+       If movement found and enemy piece on tile, add to available enemy tiles.
+    */
     public static void determinePossibleMoves(String chessPieceOrig, int y, int x)
     {
+        // Reset lists
         setAvailableTiles(new ArrayList<>());
         setAvailableEnemyTiles(new ArrayList<>());
+
         String teamColor, chessPiece;
         if( chessPieceOrig.contains("wh") )
         {
@@ -196,7 +218,19 @@ public class PieceMovement extends Board{
         }
     }
 
-    // Determine if given space is available for knight
+    /*
+   Parameters:
+       int x: Knight's x (row location) in Array Matrix
+       int y: Knight's y (column location) in Array Matrix
+       String enemy: String containing enemy color
+       String ally: String containing ally color
+   Return Value:
+       Return: Void
+   Description:
+       Checks knight movement from current tile to determine possible moves from current location.
+       If movement found and no piece on tile, add to available tiles.
+       If movement found and enemy piece on tile, add to available enemy tiles.
+    */
     public static void knightMovement(int x, int y, String enemy, String ally)
     {
         if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoardTile(x,y).getActionCommand().contains(ally))
@@ -211,7 +245,21 @@ public class PieceMovement extends Board{
         getAvailableTiles().add(getChessBoardTile(x,y));
     }
 
-    // Recursively find next diagonal movement available
+    /*
+    Parameters:
+        int x: Piece's x (row location) in Array Matrix
+        int y: Piece's y (column location) in Array Matrix
+        int dir: Used for recursive function to continue searching in set direction
+        String enemy: String containing enemy color
+        String ally: String containing ally color
+        Boolean isKing: Boolean value to change distance of available moves to 1 instead of full range
+    Return Value:
+        Return: Void
+    Description:
+        Checks diagonally from current tile to determine possible moves from current location.
+        If movement found and no piece on tile, add to available tiles.
+        If movement found and enemy piece on tile, add to available enemy tiles.
+     */
     public static void diagonalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
     {
         if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoardTile(x,y).getActionCommand().contains(ally))
@@ -248,7 +296,21 @@ public class PieceMovement extends Board{
         }
     }
 
-    // Recursively find next vertical and/or horizontal movement available
+    /*
+    Parameters:
+        int x: Piece's x (row location) in Array Matrix
+        int y: Piece's y (column location) in Array Matrix
+        int dir: Used for recursive function to continue searching in set direction
+        String enemy: String containing enemy color
+        String ally: String containing ally color
+        Boolean isKing: Boolean value to change distance of available moves to 1 instead of full range
+    Return Value:
+        Return: Void
+    Description:
+        Checks vertically and horizontally from current tile to determine possible moves from current location.
+        If movement found and no piece on tile, add to available tiles.
+        If movement found and enemy piece on tile, add to available enemy tiles.
+     */
     public static void verticalHorizontalMovement(int x, int y, int dir, String enemy, String ally, Boolean isKing)
     {
         if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally))
@@ -289,18 +351,30 @@ public class PieceMovement extends Board{
         }
     }
 
-    // Checks for enemy bishops, queens, and rooks in check spots
+    /*
+    Parameters:
+        int x: Piece's x (row location) in Array Matrix
+        int y: Piece's y (column location) in Array Matrix
+        int dir: Used for recursive function to continue searching in set direction
+        String enemy: String containing enemy color
+        String ally: String containing ally color
+        Boolean isKing: Boolean value to change distance of available moves to 1 instead of full range
+    Return Value:
+        Return: Void
+    Description:
+        Checks all spaces from King to determine if in check by enemy piece.
+     */
     public static void checkSpaces(int x, int y, int dir, String enemy, String ally)
     {
         if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally) )
         {
             return;
         }
-        if( getChessBoard()[x][y].getActionCommand().contains(enemy) && !((dir < 4 && getChessBoard()[x][y].getActionCommand().contains("Rook")) || (dir > 4 && getChessBoard()[x][y].getActionCommand().contains("Bishop")) || getChessBoard()[x][y].getActionCommand().contains("Queen")))
+        if( getChessBoard()[x][y].getActionCommand().contains(enemy) && !((dir <= 4 && getChessBoard()[x][y].getActionCommand().contains("Rook")) || (dir > 4 && getChessBoard()[x][y].getActionCommand().contains("Bishop")) || getChessBoard()[x][y].getActionCommand().contains("Queen")))
         {
             return;
         }
-        if( getChessBoard()[x][y].getActionCommand().contains(enemy) && ((dir < 4 && getChessBoard()[x][y].getActionCommand().contains("Rook")) || (dir > 4 && getChessBoard()[x][y].getActionCommand().contains("Bishop")) || getChessBoard()[x][y].getActionCommand().contains("Queen")))
+        if( getChessBoard()[x][y].getActionCommand().contains(enemy) && ((dir <= 4 && getChessBoard()[x][y].getActionCommand().contains("Rook")) || (dir > 4 && getChessBoard()[x][y].getActionCommand().contains("Bishop")) || getChessBoard()[x][y].getActionCommand().contains("Queen")))
         {
             if(ally.equals("b"))
             {
@@ -324,7 +398,19 @@ public class PieceMovement extends Board{
         }
     }
 
-    // Checks for enemy knights in check spots
+    /*
+    Parameters:
+        int x: Knight's x (row location) in Array Matrix
+        int y: Knight's y (column location) in Array Matrix
+        String enemy: String containing enemy color
+        String ally: String containing ally color
+    Return Value:
+        Return: Void
+    Description:
+        Uses movement of knight to determine possible knights checking king from current location.
+        If movement found and no piece on tile, add to available tiles.
+        If movement found and enemy piece on tile, add to available enemy tiles.
+     */
     public static void checkForKnight(int x, int y, String enemy, String ally)
     {
         if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally))
@@ -344,6 +430,17 @@ public class PieceMovement extends Board{
         }
     }
 
+    /*
+    Parameters:
+        JButton whiteKing: current tile of White king
+        JButton blackKing: current tile of Black king
+    Return Value:
+        Return: Void
+    Description:
+        Checks all spaces from King to determine if it is being put in check by an enemy piece.
+        Checks for Pawns, Bishops, Knights, Rooks, and Queens.
+        If King is found to be in check, call highlightKingCheck to set in check and highlight King red.
+     */
     public static void checkKing(JButton whiteKing, JButton blackKing)
     {
         String blackLocation, whiteLocation;
@@ -402,24 +499,46 @@ public class PieceMovement extends Board{
         HighlightTiles.highlightKingCheck();
     }
 
-    public static void savePiece(String chessPiece)
+    /*
+    Parameters:
+        String sourceTile: Tile information of source tile
+    Return Value:
+        Return: Void
+    Description:
+        Starts by clearing temp variables then saves Piece to class variables
+        to be used in move function if valid. In addition, selects piece by
+        highlighting chosen piece Blue and by determining possible moves creates
+        a list of available moves and a list of available enemies that can be taken.
+     */
+    public static void savePiece(String sourceTile)
     {
         setMovingPiece("");
-        String[] arrOfStr = chessPiece.split(",");
+        String[] arrOfStr = sourceTile.split(",");
         setOriginalLocation(arrOfStr[0]);
         setMovingPiece(arrOfStr[1]);
         setPieceSelected(true);
-        setTeamMoved(true);
 
         // Convert to matrix location
         int yO = (Character.getNumericValue(getOriginalLocation().charAt(0))-8)*-1;
         int xO = getOriginalLocation().charAt(1)-65;
+
         PieceMovement.checkKing(getwhKing(), getbKing());
         PieceMovement.determinePossibleMoves(getMovingPiece(), yO, xO);
+
         setCurrentTile(getChessBoardTile(xO, yO));
         getCurrentTile().setBorder(BorderFactory.createMatteBorder(3,3,3,3,Color.blue));
     }
 
+    /*
+    Parameters:
+        String newSelectedTile: Tile information of destination tile
+        int xN: New tile x (row location) in Array Matrix
+        int yN: New tile y (column location) in Array Matrix
+    Return Value:
+        Return: Void
+    Description:
+        Moves piece from saved source location to new destination location given in parameter
+     */
     public static void movePiece(String newSelectedTile, int xN, int yN)
     {
         String[] arrOfStr = newSelectedTile.split(",");
@@ -449,7 +568,6 @@ public class PieceMovement extends Board{
         setOriginalLocation(null);
         setMovingPiece(null);
         setPieceSelected(false);
-        setTeamMoved(false);
         PieceMovement.checkKing(getwhKing(), getbKing());
         HighlightTiles.highlightSquareEmpty(getAvailableTiles(), getAvailableEnemyTiles());
 
@@ -457,6 +575,16 @@ public class PieceMovement extends Board{
         else { setCurrentTurn("b"); }
     }
 
+    /*
+    Parameters:
+        String locationO: Original information on source tile
+        String locationN: Original information on destination tile
+        String piece: Moving piece located on source tile
+    Return Value:
+        Return: Boolean value to determine if given move is possible
+    Description:
+        Test to see if move from locationO to locationN with piece is a valid move that can be made  if in check
+     */
     public static boolean isValidMove(String locationO, String locationN, String piece)
     {
         int yO = (Character.getNumericValue(locationO.charAt(0))-8)*-1;
@@ -472,15 +600,19 @@ public class PieceMovement extends Board{
         // Set new button to contain chess piece and location
         getChessBoardTile(xN,yN).setActionCommand(locationN+','+piece);
 
+        // If moving black king, check for check in new location of king
         if(getChessBoardTile(xN,yN).getActionCommand().contains("bKing") )
         {
             PieceMovement.checkKing(getwhKing(), getChessBoardTile(xN, yN));
         }
 
+        // If moving white king, check for check in new location of king
         else if(getChessBoardTile(xN,yN).getActionCommand().contains("whKing") )
         {
             PieceMovement.checkKing(getChessBoardTile(xN, yN), getbKing());
         }
+
+        // Check for check after moving piece to new location
         else
         {
             PieceMovement.checkKing(getwhKing(), getbKing());
@@ -489,32 +621,47 @@ public class PieceMovement extends Board{
         if(getCurrentTurn().equals("wh")) {
             // Check if white piece can freely move
             if (getWhiteCheck()) {
-                // Undo piece move as king in check
-                resetVars( originalPieceAction, newPieceAction, xO, yO, xN, yN);
+                // White king still in check; not a valid move
+                resetVars( originalPieceAction, newPieceAction);
                 return false;
             } else {
-                // Undo piece move as king in check
-                resetVars( originalPieceAction, newPieceAction, xO, yO, xN, yN);
+                // White king no longer in check; a valid move
+                resetVars( originalPieceAction, newPieceAction);
                 return true;
             }
         }
         else if(getCurrentTurn().equals("b")) {
             // Check if black piece can freely move
             if ( getBlackCheck() ) {
-                // Undo piece move as king in check
-                resetVars( originalPieceAction, newPieceAction, xO, yO, xN, yN);
+                // Black king still in check; not a valid move
+                resetVars( originalPieceAction, newPieceAction);
                 return false;
             } else {
-                resetVars( originalPieceAction, newPieceAction, xO, yO, xN, yN);
+                // Black king no longer in check; a valid move
+                resetVars( originalPieceAction, newPieceAction);
                 return true;
             }
         }
-        PieceMovement.checkKing(getwhKing(), getbKing());
+
+        resetVars( originalPieceAction, newPieceAction);
         return false;
     }
 
-    public static void resetVars(String locationO, String locationN, int xO, int yO, int xN, int yN )
+    /*
+    Parameters:
+        String locationO: Original information on source tile
+        String locationN: Original information on destination tile
+    Return Value:
+        Return: Void
+    Description:
+        Resets source and destination tile to be original information
+     */
+    public static void resetVars(String locationO, String locationN)
     {
+        int yO = (Character.getNumericValue(locationO.charAt(0))-8)*-1;
+        int xO = locationO.charAt(1)-65;
+        int yN = (Character.getNumericValue(locationN.charAt(0))-8)*-1;
+        int xN = locationN.charAt(1)-65;
         getChessBoardTile(xO,yO).setActionCommand(locationO);
         getChessBoardTile(xN,yN).setActionCommand(locationN);
         PieceMovement.checkKing(getwhKing(), getbKing());
