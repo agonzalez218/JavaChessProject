@@ -16,22 +16,31 @@ import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+/*
+Author: Abel Gonzalez
+Project Title: Chess Project in Java
+Date: September 2022
+Description of File: This file holds the necessary functions and variables responsible for the game.
+    It unites all files and functions necessary for gameplay. In particular, this file is responsible
+    for the initial state of the board and updating it if changes are requested by user.
+ */
+
 public class Board extends JFrame implements ActionListener {
     JMenuBar menuBar = new JMenuBar();
-    JMenu menu = new JMenu("Chess Board Options");
+    JMenu boardMenu = new JMenu("Chess Board Options");
+    JMenu AIMenu = new JMenu("AI Options");
     JRadioButtonMenuItem rbMenuItem;
     JPanel form = new JPanel();
     JPanel middlePanel = new JPanel();
     static JButton exitGame = new JButton();
     JButton concede = new JButton();
     JButton restartGame = new JButton();
-    ButtonGroup group = new ButtonGroup();
     static JButton bKing = new JButton(), whKing = new JButton();
     static JButton[][] chessBoard = new JButton[8][8];
     static List<JButton> availableTiles = new ArrayList<>(), availableEnemyTiles = new ArrayList<>();
     static JButton currentTile = new JButton();
     static String s = "src\\ChessPieces\\";
-    static String teamTurn;
+    static String teamTurn, AIColor = "b";
     static Boolean pieceSelected = false;
     static Boolean whiteCheck = false, blackCheck = false, teamMoved = false;
 
@@ -95,12 +104,8 @@ public class Board extends JFrame implements ActionListener {
     public static Boolean getPieceSelected() {
         return pieceSelected;
     }
-    public static void setTeamMoved(Boolean condition) {
-        teamMoved = condition;
-    }
-    public static Boolean getTeamMoved() {
-        return teamMoved;
-    }
+    public static void setAIColor(String teamColor) {AIColor = teamColor;}
+    public static String getAIColor() {return AIColor;}
 
     public Board() {
         setCurrentTurn("wh");
@@ -110,7 +115,8 @@ public class Board extends JFrame implements ActionListener {
         this.form.setLayout(null);
         this.setLocations();
         this.setText();
-        this.createMenu();
+        this.createBoardMenu();
+        this.createAIMenu();
         this.addComponents();
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -138,12 +144,12 @@ public class Board extends JFrame implements ActionListener {
 
                 // If tile is in first two rows, pieces all start black
                 if (j <= 1) {
-                    str = addBlackPieceImages(i, j, s, tempSquare);
+                    str = addBlackPieceImages(i, j, tempSquare);
                 }
 
                 // If tile is in last two rows, pieces all start white
                 else if (j >= 6) {
-                    str = addWhitePieceImages(i, j, s, tempSquare);
+                    str = addWhitePieceImages(i, j, tempSquare);
                 }
 
                 // if between , they are normal tiles and are just assigned chess board location
@@ -164,12 +170,20 @@ public class Board extends JFrame implements ActionListener {
         }
         setbKing(getChessBoardTile(4, 0));
         setwhKing(getChessBoardTile(4, 7));
+
         this.add(this.middlePanel);
         this.add(this.form);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+
+        if( getAIColor().equals("wh"))
+        {
+            ChessAI.moveAIPiece(this);
+            PieceMovement.checkKing(getwhKing(), getbKing());
+        }
     }
 
+    // Sets location of all components in window
     private void setLocations() {
         this.setSize(400, 445);
         this.middlePanel.setBorder(new TitledBorder(new EtchedBorder(), ""));
@@ -179,6 +193,7 @@ public class Board extends JFrame implements ActionListener {
         this.concede.setBounds(140, 345, 110, 30);
     }
 
+    // Sets text of Window and buttons
     private void setText() {
         this.setTitle("Chess Game");
         exitGame.setText("Exit Game");
@@ -189,9 +204,11 @@ public class Board extends JFrame implements ActionListener {
         concede.setMnemonic(KeyEvent.VK_C);
     }
 
-    public void createMenu() {
-        menu.setMnemonic(KeyEvent.VK_H);
-        menuBar.add(menu);
+    // Creates Board Menu and radio button options
+    public void createBoardMenu() {
+        ButtonGroup group = new ButtonGroup();
+        boardMenu.setMnemonic(KeyEvent.VK_H);
+        menuBar.add(boardMenu);
 
         rbMenuItem = new JRadioButtonMenuItem("Default Board (Light Gray/White)");
         rbMenuItem.setMnemonic(KeyEvent.VK_D);
@@ -204,7 +221,7 @@ public class Board extends JFrame implements ActionListener {
         }
 
         group.add(rbMenuItem);
-        menu.add(rbMenuItem);
+        boardMenu.add(rbMenuItem);
 
         rbMenuItem = new JRadioButtonMenuItem("Tan Brown/Dark Brown");
         rbMenuItem.setMnemonic(KeyEvent.VK_T);
@@ -216,9 +233,42 @@ public class Board extends JFrame implements ActionListener {
             rbMenuItem.setSelected(true);
         }
         group.add(rbMenuItem);
-        menu.add(rbMenuItem);
+        boardMenu.add(rbMenuItem);
     }
 
+    // Creates AI Menu and radio button options
+    public void createAIMenu() {
+        ButtonGroup group = new ButtonGroup();
+        AIMenu.setMnemonic(KeyEvent.VK_A);
+        menuBar.add(AIMenu);
+
+        rbMenuItem = new JRadioButtonMenuItem("Default Team (Black)");
+        rbMenuItem.setMnemonic(KeyEvent.VK_B);
+        //noinspection deprecation
+        rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_D, InputEvent.ALT_MASK));
+        rbMenuItem.addActionListener(this);
+        if (Objects.equals(HighlightTiles.getAIColor(), "b")) {
+            rbMenuItem.setSelected(true);
+        }
+
+        group.add(rbMenuItem);
+        AIMenu.add(rbMenuItem);
+
+        rbMenuItem = new JRadioButtonMenuItem("White Team");
+        rbMenuItem.setMnemonic(KeyEvent.VK_W);
+        //noinspection deprecation
+        rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_T, InputEvent.ALT_MASK));
+        rbMenuItem.addActionListener(this);
+        if (Objects.equals(HighlightTiles.getAIColor(), "wh")) {
+            rbMenuItem.setSelected(true);
+        }
+        group.add(rbMenuItem);
+        AIMenu.add(rbMenuItem);
+    }
+
+    // Adds components to Board.
     private void addComponents() {
         this.add(exitGame);
         this.add(restartGame);
@@ -229,8 +279,17 @@ public class Board extends JFrame implements ActionListener {
         this.setJMenuBar(menuBar);
     }
 
-    // Adds Piece name, Piece Picture location, and Chess Board location to button
-    private String addBlackPieceImages(int i, int j, String s, JButton tempSquare) {
+    /*
+   Parameters:
+       int i: Current matrix row
+       int j: Current matrix column
+       JButton tempSquare: Current Tile of Chess Board
+   Return Value:
+       Return: Str
+   Description:
+       Creates file path to image and sets tile location based on current chess board location.
+    */
+    private String addBlackPieceImages(int i, int j, JButton tempSquare) {
         String str = "";
         int x = (-1 * j) + 8;
         char y = (char) (i + 65);
@@ -262,8 +321,17 @@ public class Board extends JFrame implements ActionListener {
         return str;
     }
 
-    // Adds Piece name, Piece Picture location, and Chess Board location to button
-    private String addWhitePieceImages(int i, int j, String s, JButton tempSquare) {
+    /*
+   Parameters:
+       int i: Current matrix row
+       int j: Current matrix column
+       JButton tempSquare: Current Tile of Chess Board
+   Return Value:
+       Return: Str
+   Description:
+       Creates file path to image and sets tile location based on current chess board location.
+    */
+    private String addWhitePieceImages(int i, int j, JButton tempSquare) {
         String str = "";
         int x = (-1 * j) + 8;
         char y = (char) (i + 65);
@@ -295,10 +363,19 @@ public class Board extends JFrame implements ActionListener {
         return str;
     }
 
-    public static void addIconToButton(String str, JButton button) {
+    /*
+   Parameters:
+       String filePath: Path to image
+       JButton button: Tile that will have updated image
+   Return Value:
+       Return: Void
+   Description:
+       Adds icon/picture to a given tile.
+    */
+    public static void addIconToButton(String filePath, JButton button) {
         BufferedImage myPicture;
         try {
-            myPicture = ImageIO.read(new File(str));
+            myPicture = ImageIO.read(new File(filePath));
             Image scaledImage = myPicture.getScaledInstance(button.getWidth(), button.getHeight(), Image.SCALE_SMOOTH);
             button.setIcon(new ImageIcon(scaledImage));
         } catch (IOException e) {
@@ -306,7 +383,14 @@ public class Board extends JFrame implements ActionListener {
         }
     }
 
-    // Ends current game and resets board if user desires
+    /*
+   Parameters:
+       N/A
+   Return Value:
+       Return: Void
+   Description:
+       Ends current game and congratulates winner based on which team conceded.
+    */
     public void endGame() {
         Object[] options = {"OK", "CANCEL"};
         Object result = null;
@@ -331,32 +415,60 @@ public class Board extends JFrame implements ActionListener {
         }
     }
 
+    /*
+   Parameters:
+       ActionEvent ae: Action event that called function
+   Return Value:
+       Return: Void
+   Description:
+       If action performed, such as button press, function is called
+    */
     public void actionPerformed(ActionEvent ae) {
         String str = ae.getActionCommand();
         // Convert current (new) tile to matrix location
         int yN = (Character.getNumericValue(str.charAt(0)) - 8) * -1;
         int xN = str.charAt(1) - 65;
 
-        if (str.equals("Default Board (Light Gray/White)")) {
-            HighlightTiles.setOption(68);
-            HighlightTiles.changeChessBoardBackground();
-        }
-        if (str.equals("Tan Brown/Dark Brown")) {
-            HighlightTiles.setOption(84);
-            HighlightTiles.changeChessBoardBackground();
-        }
-
-        if (str.equals("Exit Game")) {
-            System.exit(0);
-        }
-        if (str.equals("Restart Game")) {
-            Board b = new Board();
-            this.setVisible(false);
-            b.setVisible(true);
-            return;
-        }
-        if (str.equals("Concede")) {
-            endGame();
+        switch (str) {
+            case "White Team" -> {
+                setAIColor("wh");
+                if( getCurrentTurn().equals("wh"))
+                {
+                    ChessAI.moveAIPiece(this);
+                    PieceMovement.checkKing(getwhKing(), getbKing());
+                }
+                return;
+            }
+            case "Default Team (Black)" -> {
+                setAIColor("b");
+                if( getCurrentTurn().equals("b"))
+                {
+                    ChessAI.moveAIPiece(this);
+                    PieceMovement.checkKing(getwhKing(), getbKing());
+                }
+                return;
+            }
+            case "Default Board (Light Gray/White)" -> {
+                HighlightTiles.setOption(68);
+                HighlightTiles.changeChessBoardBackground();
+                return;
+            }
+            case "Tan Brown/Dark Brown" -> {
+                HighlightTiles.setOption(84);
+                HighlightTiles.changeChessBoardBackground();
+                return;
+            }
+            case "Exit Game" -> System.exit(0);
+            case "Restart Game" -> {
+                Board b = new Board();
+                this.setVisible(false);
+                b.setVisible(true);
+                return;
+            }
+            case "Concede" -> {
+                endGame();
+                return;
+            }
         }
 
         // Select original piece
@@ -368,28 +480,28 @@ public class Board extends JFrame implements ActionListener {
         }
 
         // Move piece
-        else if (getTeamMoved() && getPieceSelected() && (getAvailableTiles().contains(getChessBoardTile(xN, yN)) || getAvailableEnemyTiles().contains(getChessBoardTile(xN, yN)))) {
+        else if ( getPieceSelected() && (getAvailableTiles().contains(getChessBoardTile(xN, yN)) || getAvailableEnemyTiles().contains(getChessBoardTile(xN, yN)))) {
             String[] arrOfStr = str.split(",");
             String newLocation = arrOfStr[0];
-            // Convert to matrix location
+
+            // If new destination tile is a valid move, confirm move then check if king in check
             if (PieceMovement.isValidMove(PieceMovement.getOriginalLocation(), newLocation, PieceMovement.getMovingPiece())) {
                 PieceMovement.movePiece(str, xN, yN);
                 PieceMovement.checkKing(getwhKing(), getbKing());
-                printBoard();
             }
+            // If not a valid move, reset variables
             else
             {
                 PieceMovement.setOriginalLocation("");
                 PieceMovement.setMovingPiece("");
                 setPieceSelected(false);
-                setTeamMoved(false);
                 HighlightTiles.highlightSquareEmpty(getAvailableTiles(), getAvailableEnemyTiles());
             }
 
-            if (Objects.equals(getCurrentTurn(), "b")) {
+            // If AI turn, allow it to move then check kings
+            if (Objects.equals(getCurrentTurn(), AIColor)) {
                 ChessAI.moveAIPiece(this);
                 PieceMovement.checkKing(getwhKing(), getbKing());
-                printBoard();
             }
 
         }
@@ -398,11 +510,18 @@ public class Board extends JFrame implements ActionListener {
             PieceMovement.setOriginalLocation("");
             PieceMovement.setMovingPiece("");
             setPieceSelected(false);
-            setTeamMoved(false);
             HighlightTiles.highlightSquareEmpty(getAvailableTiles(), getAvailableEnemyTiles());
         }
     }
 
+    /*
+   Parameters:
+       String line: Line to be written to debug file
+   Return Value:
+       Return: Void
+   Description:
+       Used for debugging; writes a given line to debug file
+    */
     public static void writeToDebugFile(String line) {
         try {
             try(FileWriter fw = new FileWriter("debugFile.txt", true);
@@ -414,6 +533,14 @@ public class Board extends JFrame implements ActionListener {
         }
     }
 
+    /*
+   Parameters:
+        N/A
+   Return Value:
+       Return: Void
+   Description:
+       Uses writeToDebugFile function to print board to debugFile
+    */
     public static void printBoard()
     {
         int i, j;
