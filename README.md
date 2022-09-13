@@ -6,6 +6,7 @@ This project is my own game of Chess made in Java. This project was done to test
 [Chess Piece Rules](#chess-piece-rules)<br/>
 [Tile Highlight Colors](#tile-highlight-colors)<br/>
 [Chess Board Options](#chess-board-options)<br/>
+[AI Options](#ai-options)<br/>
 [Key Mnemonics](#key-mnemonics)<br/>
 [Demo Images](#demo-images)<br/>
 
@@ -47,19 +48,39 @@ Individual Piece Moves:<br/>
 - Default Light Grey / White
 - Tan Brown / Dark Brown
 
+## AI Options
+- Black Team Default
+  - By Default, Black team is chosen as enemy AI
+- White Team
+  - If White team is chosen as enemy AI, they move first 
+- Auto
+  - Runs simulation of game until first check is found
+- None
+  - Does not use any AI and allows two player game
+
 ## Key Mnemonics
+- ALT + A
+  - Opens AI Menu
+- ALT + B
+  - Selects Black Team as AI
 - ALT + C
-  - Concede
+  - Concedes Defeat
 - ALT + D
-  - Default Chess Board Color
+  - Sets Default Chess Board Color
 - ALT + E
   - Exit Game
  - ALT + H
-  - Chess Board Options
+  - Opens Chess Board Options
+- ALT + N
+  - Disabes AI
 - ALT + R
   - Restart Game
 - ALT + T
-  - Tan Brown / Dark Brown Chess Board Color
+  - Sets Tan Brown / Dark Brown Chess Board Color
+- ALT + U
+  - Selects Auto Play
+- ALT + W
+  - Selects White Team as AI
 
 ## Demo Images
 The following image is the main playing screen<br/>
@@ -81,6 +102,11 @@ The following image is the result of pressing the concede button:<br/>
 The following image is the menu option that allows user to change Chess Board Color:<br/>
 The board maintains this color while the game window is open, even if reset or during gameplay.<br/>
 ![MenuOption](https://user-images.githubusercontent.com/60588691/189186643-ec52a0f3-0fa2-4253-b62b-432374673209.png)
+
+The following image is the menu option that allows user to change AI Options:<br/>
+If Auto is chosen, it will run until a King is in check.<br/>
+![image](https://user-images.githubusercontent.com/60588691/189958750-1ac43a88-ec14-42bb-bc40-0a5cbfbce942.png)
+
 
 The following image is the second option of the Chess Board (<a href="#chess-board-options"> link to Chess Board Options </a> ):<br/>
 ![SecondChessBoardColorOption](https://user-images.githubusercontent.com/60588691/189186844-33129b33-2c25-44cf-a124-76a78a8f8ff6.png)
