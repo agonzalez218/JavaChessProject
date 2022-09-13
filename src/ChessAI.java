@@ -79,10 +79,6 @@ public class ChessAI extends Board{
         availableMoves.sort(new sortByPoints());
         max = getAvailableMoves().size()-1;
 
-        for(Move tile : getAvailableMoves()) {
-            System.out.println(tile.pointValue);
-        }
-
         // Return highest point value move
         if(availableMoves.get(availableMoves.size()-1).pointValue == 0)
         {
@@ -141,7 +137,6 @@ public class ChessAI extends Board{
                             setwhKing(getChessBoardTile(newPieceLocation[0],newPieceLocation[1]));
                         }
                     }
-                    System.out.println(chosenMove.SourceLocation + " > " + chosenMove.DestinationLocation);
                     PieceMovement.movePiece(getNewTile(), newPieceLocation[0], newPieceLocation[1]);
                     PieceMovement.checkKing(getwhKing(), getbKing());
 
