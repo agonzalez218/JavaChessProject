@@ -408,8 +408,6 @@ public class PieceMovement extends Board{
         Return: Void
     Description:
         Uses movement of knight to determine possible knights checking king from current location.
-        If movement found and no piece on tile, add to available tiles.
-        If movement found and enemy piece on tile, add to available enemy tiles.
      */
     public static void checkForKnight(int x, int y, String enemy, String ally)
     {
@@ -418,6 +416,36 @@ public class PieceMovement extends Board{
             return;
         }
         if( getChessBoard()[x][y].getActionCommand().contains(enemy) && getChessBoard()[x][y].getActionCommand().contains("Knight"))
+        {
+            if(ally.equals("b"))
+            {
+                setBlackCheck(true);
+            }
+            else
+            {
+                setWhiteCheck(true);
+            }
+        }
+    }
+
+    /*
+    Parameters:
+        int x: Knight's x (row location) in Array Matrix
+        int y: Knight's y (column location) in Array Matrix
+        String enemy: String containing enemy color
+        String ally: String containing ally color
+    Return Value:
+        Return: Void
+    Description:
+        Uses movement of king to determine possible enemy king checking king from current location.
+     */
+    public static void checkForKing(int x, int y, String enemy, String ally)
+    {
+        if(x > 7 || x < 0 || y > 7 || y < 0 || getChessBoard()[x][y].getActionCommand().contains(ally))
+        {
+            return;
+        }
+        if( getChessBoard()[x][y].getActionCommand().contains(enemy) && getChessBoard()[x][y].getActionCommand().contains("King"))
         {
             if(ally.equals("b"))
             {
@@ -459,6 +487,17 @@ public class PieceMovement extends Board{
         // Check for pawn
         setBlackCheck(xOb < 7 && yOb < 7 && (getChessBoard()[xOb + 1][yOb + 1].getActionCommand().contains("whPawn") || xOb > 0 && getChessBoard()[xOb - 1][yOb + 1].getActionCommand().contains("whPawn")));
 
+        // Check for enemy king
+        checkForKing(xOb, yOb-1, "wh", "b");
+        checkForKing(xOb, yOb+1, "wh", "b");
+        checkForKing(xOb+1, yOb, "wh", "b");
+        checkForKing(xOb-1, yOb, "wh", "b");
+        checkForKing(xOb+1, yOb+1, "wh", "b");
+        checkForKing(xOb-1, yOb+1, "wh", "b");
+        checkForKing(xOb+1, yOb-1, "wh", "b");
+        checkForKing(xOb-1, yOb-1, "wh", "b");
+
+        // Check for other enemy pieces
         checkForKnight(xOb+2, yOb+1, "wh", "b");
         checkForKnight(xOb+2, yOb-1, "wh", "b");
         checkForKnight(xOb-2, yOb+1, "wh", "b");
@@ -479,6 +518,17 @@ public class PieceMovement extends Board{
         // Check for pawn
         setWhiteCheck(xOwh < 7 && yOwh > 0 && getChessBoard()[xOwh + 1][yOwh - 1].getActionCommand().contains("bPawn") || xOwh > 0 && yOwh > 0 && getChessBoard()[xOwh - 1][yOwh - 1].getActionCommand().contains("bPawn"));
 
+        // Check for enemy king
+        checkForKing(xOwh, yOwh-1, "b", "wh");
+        checkForKing(xOwh, yOwh+1, "b", "wh");
+        checkForKing(xOwh+1, yOwh, "b", "wh");
+        checkForKing(xOwh-1, yOwh, "b", "wh");
+        checkForKing(xOwh+1, yOwh+1, "b", "wh");
+        checkForKing(xOwh-1, yOwh+1, "b", "wh");
+        checkForKing(xOwh+1, yOwh-1, "b", "wh");
+        checkForKing(xOwh-1, yOwh-1, "b", "wh");
+
+        // Check for other enemy pieces
         checkForKnight(xOwh+2, yOwh+1, "b", "wh");
         checkForKnight(xOwh+2, yOwh-1, "b", "wh");
         checkForKnight(xOwh-2, yOwh+1, "b", "wh");
@@ -601,13 +651,13 @@ public class PieceMovement extends Board{
         getChessBoardTile(xN,yN).setActionCommand(locationN+','+piece);
 
         // If moving black king, check for check in new location of king
-        if(getChessBoardTile(xN,yN).getActionCommand().contains("bKing") )
+        if(originalPieceAction.contains("bKing") )
         {
             PieceMovement.checkKing(getwhKing(), getChessBoardTile(xN, yN));
         }
 
         // If moving white king, check for check in new location of king
-        else if(getChessBoardTile(xN,yN).getActionCommand().contains("whKing") )
+        else if(originalPieceAction.contains("whKing") )
         {
             PieceMovement.checkKing(getChessBoardTile(xN, yN), getbKing());
         }

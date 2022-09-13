@@ -42,7 +42,7 @@ public class Board extends JFrame implements ActionListener {
     static String s = "src\\ChessPieces\\";
     static String teamTurn, AIColor = "b";
     static Boolean pieceSelected = false;
-    static Boolean whiteCheck = false, blackCheck = false, teamMoved = false;
+    static Boolean whiteCheck = false, blackCheck = false;
 
     // Setters and Getters of Variables
     public static void setCurrentTile(JButton selectedTile) {
@@ -205,7 +205,7 @@ public class Board extends JFrame implements ActionListener {
     }
 
     // Creates Board Menu and radio button options
-    public void createBoardMenu() {
+    private void createBoardMenu() {
         ButtonGroup group = new ButtonGroup();
         boardMenu.setMnemonic(KeyEvent.VK_H);
         menuBar.add(boardMenu);
@@ -237,7 +237,7 @@ public class Board extends JFrame implements ActionListener {
     }
 
     // Creates AI Menu and radio button options
-    public void createAIMenu() {
+    private void createAIMenu() {
         ButtonGroup group = new ButtonGroup();
         AIMenu.setMnemonic(KeyEvent.VK_A);
         menuBar.add(AIMenu);
@@ -262,6 +262,27 @@ public class Board extends JFrame implements ActionListener {
                 KeyEvent.VK_T, InputEvent.ALT_MASK));
         rbMenuItem.addActionListener(this);
         if (Objects.equals(HighlightTiles.getAIColor(), "wh")) {
+            rbMenuItem.setSelected(true);
+        }
+        group.add(rbMenuItem);
+        AIMenu.add(rbMenuItem);
+
+        rbMenuItem = new JRadioButtonMenuItem("Auto");
+        rbMenuItem.setMnemonic(KeyEvent.VK_W);
+        //noinspection deprecation
+        rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_T, InputEvent.ALT_MASK));
+        rbMenuItem.addActionListener(this);
+        group.add(rbMenuItem);
+        AIMenu.add(rbMenuItem);
+
+        rbMenuItem = new JRadioButtonMenuItem("None");
+        rbMenuItem.setMnemonic(KeyEvent.VK_W);
+        //noinspection deprecation
+        rbMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_T, InputEvent.ALT_MASK));
+        rbMenuItem.addActionListener(this);
+        if (Objects.equals(HighlightTiles.getAIColor(), "n")) {
             rbMenuItem.setSelected(true);
         }
         group.add(rbMenuItem);
@@ -429,7 +450,29 @@ public class Board extends JFrame implements ActionListener {
         int yN = (Character.getNumericValue(str.charAt(0)) - 8) * -1;
         int xN = str.charAt(1) - 65;
 
+        boolean loop = str.equals("Auto");
+
+        while(loop)
+        {
+            setAIColor("wh");
+            ChessAI.moveAIPiece(this);
+            if(getWhiteCheck() || getBlackCheck())
+            {
+                loop=false;
+            }
+            setAIColor("b");
+            ChessAI.moveAIPiece(this);
+            if(getWhiteCheck() || getBlackCheck())
+            {
+                loop=false;
+            }
+        }
+
         switch (str) {
+            case "None" -> {
+                setAIColor("n");
+                return;
+            }
             case "White Team" -> {
                 setAIColor("wh");
                 if( getCurrentTurn().equals("wh"))
@@ -481,11 +524,9 @@ public class Board extends JFrame implements ActionListener {
 
         // Move piece
         else if ( getPieceSelected() && (getAvailableTiles().contains(getChessBoardTile(xN, yN)) || getAvailableEnemyTiles().contains(getChessBoardTile(xN, yN)))) {
-            String[] arrOfStr = str.split(",");
-            String newLocation = arrOfStr[0];
 
             // If new destination tile is a valid move, confirm move then check if king in check
-            if (PieceMovement.isValidMove(PieceMovement.getOriginalLocation(), newLocation, PieceMovement.getMovingPiece())) {
+            if (PieceMovement.isValidMove(PieceMovement.getOriginalLocation(), str, PieceMovement.getMovingPiece())) {
                 PieceMovement.movePiece(str, xN, yN);
                 PieceMovement.checkKing(getwhKing(), getbKing());
             }

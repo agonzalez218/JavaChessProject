@@ -120,12 +120,13 @@ public class ChessAI extends Board{
                         {
                             setbKing(getChessBoardTile(newPieceLocation[0],newPieceLocation[1]));
                         }
-                        else
+                        if(Objects.equals(getAIColor(), "wh"))
                         {
                             setwhKing(getChessBoardTile(newPieceLocation[0],newPieceLocation[1]));
                         }
                     }
                     PieceMovement.movePiece(getNewTile(), newPieceLocation[0], newPieceLocation[1]);
+                    PieceMovement.checkKing(getwhKing(), getbKing());
 
                     // Reset variables and list
                     setAvailableMoves(new ArrayList<>());
