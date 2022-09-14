@@ -443,6 +443,21 @@ public class Board extends JFrame implements ActionListener {
     }
 
     /*
+    Parameters:
+        N/A
+    Return Value:
+        Return: returns an array containing the Matrix location of New Tile Location
+    Description:
+        Returns an array containing the Matrix location of New Tile Location ( 0 being Y and 1 being X )
+     */
+    public static int[] getTileArr(String tile){
+        int[] arrLocation = new int[2];
+        arrLocation[1] = (Character.getNumericValue(tile.charAt(0))-8)*-1 ;
+        arrLocation[0] = tile.charAt(1)-65;
+        return arrLocation;
+    }
+
+    /*
    Parameters:
        ActionEvent ae: Action event that called function
    Return Value:
@@ -561,6 +576,7 @@ public class Board extends JFrame implements ActionListener {
             HighlightTiles.highlightSquareEmpty(getAvailableTiles(), getAvailableEnemyTiles());
         }
     }
+
 
     /*
    Parameters:

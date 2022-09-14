@@ -614,6 +614,10 @@ public class PieceMovement extends Board{
         getChessBoardTile(xO,yO).setIcon(null);
         addIconToButton(s + getMovingPiece() + ".png", getChessBoardTile(xN,yN));
 
+        if( movingPiece.contains("Pawn") && ( (getCurrentTurn().equals("wh") && newLocation.contains("8")) || getCurrentTurn().equals("b") && newLocation.contains("1") ))
+        {
+            promotePawn(newLocation);
+        }
 
         setOriginalLocation(null);
         setMovingPiece(null);
@@ -715,5 +719,49 @@ public class PieceMovement extends Board{
         getChessBoardTile(xO,yO).setActionCommand(locationO);
         getChessBoardTile(xN,yN).setActionCommand(locationN);
         PieceMovement.checkKing(getwhKing(), getbKing());
+    }
+
+    /*
+    Parameters:
+        String sourceLocation: Location of source tile
+    Return Value:
+        Return: Void
+    Description:
+        Creates dialog box to allow user to choose what the pawn will be upgraded to.
+        Once chosen, the pawn is replaced with new piece.
+     */
+    public static void promotePawn(String sourceLocation)
+    {
+        int[] sourceArrLoc = getTileArr(sourceLocation);
+        Object[] options = {"Bishop",
+                "Knight", "Rook", "Queen"};
+        int n = JOptionPane.showOptionDialog(null,
+                "Which piece would you like to promote pawn to?",
+                "Pawn Promotion",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+        System.out.println(n);
+        switch(n)
+        {
+            case 0 -> {
+                getChessBoardTile(sourceArrLoc[0], sourceArrLoc[1]).setActionCommand(sourceLocation + "," + getCurrentTurn() + "Bishop");
+                addIconToButton(s + getCurrentTurn() + "Bishop" + ".png", getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]));
+            }
+            case 1 -> {
+                getChessBoardTile(sourceArrLoc[0], sourceArrLoc[1]).setActionCommand(sourceLocation + "," + getCurrentTurn() + "Knight");
+                addIconToButton(s + getCurrentTurn() + "Knight" + ".png", getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]));
+            }
+            case 2 -> {
+                getChessBoardTile(sourceArrLoc[0], sourceArrLoc[1]).setActionCommand(sourceLocation + "," + getCurrentTurn() + "Rook");
+                addIconToButton(s + getCurrentTurn() + "Rook" + ".png", getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]));
+            }
+            case 3 -> {
+                getChessBoardTile(sourceArrLoc[0], sourceArrLoc[1]).setActionCommand(sourceLocation + "," + getCurrentTurn() + "Queen");
+                addIconToButton(s + getCurrentTurn() + "Queen" + ".png", getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]));
+            }
+        }
     }
 }

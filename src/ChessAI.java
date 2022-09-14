@@ -26,21 +26,6 @@ public class ChessAI extends Board{
     public static String getNewTile(){ return newTile; }
 
     /*
-    Parameters:
-        N/A
-    Return Value:
-        Return: returns an array containing the Matrix location of New Tile Location
-    Description:
-        Returns an array containing the Matrix location of New Tile Location ( 0 being Y and 1 being X )
-     */
-    public static int[] getTileArr(String tile){
-        int[] arrLocation = new int[2];
-        arrLocation[1] = (Character.getNumericValue(tile.charAt(0))-8)*-1 ;
-        arrLocation[0] = tile.charAt(1)-65;
-        return arrLocation;
-    }
-
-    /*
    Description:
        Sorts Available Moves by their point value
     */
