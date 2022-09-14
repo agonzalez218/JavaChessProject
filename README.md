@@ -9,7 +9,7 @@ This project is my own game of Chess made in Java. This project was done to test
 [AI Options](#ai-options)<br/>
 [Key Mnemonics](#key-mnemonics)<br/>
 [Demo Images](#demo-images)<br/>
-<a href="https://github.com/agonzalez218/JavaChessProject/blob/master/ChessGameDemoImages/ChessGameplay.mp4"> Sample Gameplay </a>
+[Sample Gameplay](#sample-gameplay)<br/>
 
 
 ## Game Rules
@@ -18,6 +18,7 @@ The Chess Game I created follows normal standard game rules:<br/>
 - If a piece is blocking another, it can not move through it (Except a Knight which moves over pieces)
 - If the Team's King is in Check, the player can not move unless it is to block or stop the Check on their King
 - If a Pawn reaches the end of the board, it can be promoted to Knight, Bishop, Rook, or Queen
+
 
 ## Chess Piece Rules
 Individual Piece Moves:<br/>
@@ -37,6 +38,7 @@ Individual Piece Moves:<br/>
 - King
   - Move or Attack one tile in any direction
   
+  
 ## Tile Highlight Colors
 - Blue:
   - Current selected Chess Piece/Tile<br/>
@@ -46,9 +48,11 @@ Individual Piece Moves:<br/>
 - Yellow:
   - Shows the current selected Chess Piece's available moves
 
+
 ## Chess Board Options
 - Default Light Grey / White
 - Tan Brown / Dark Brown
+
 
 ## AI Options
 - Black Team Default
@@ -84,9 +88,8 @@ Individual Piece Moves:<br/>
 - ALT + W
   - Selects White Team as AI
 
-## Demo Images
-If you would like to see gameplay, please visit this link for <a href="https://github.com/agonzalez218/JavaChessProject/blob/master/ChessGameDemoImages/ChessGameplay.mp4"> Sample Gameplay! </a> <br/>
 
+## Demo Images
 The following image is the main playing screen<br/>
 ![MainMenu](https://user-images.githubusercontent.com/60588691/190166156-afb5c7e1-274a-4a6b-a577-d5e4a822a06d.png)
 
@@ -120,3 +123,5 @@ The following image is the second option of the Chess Board (<a href="#chess-boa
 The following gif is the result of using Mnemonics of the Menu options to switch between board colors (<a href="#key-mnemonics"> link to Key Mnemonics </a> ):<br/>
 ![BoardColorChange](https://user-images.githubusercontent.com/60588691/190166413-72293d93-bdc1-4ef8-9055-a046e763d9a1.gif)
 
+## Sample Gameplay
+https://user-images.githubusercontent.com/60588691/190172182-7121c932-485c-4dfa-a016-abae7bca5b34.mp4
