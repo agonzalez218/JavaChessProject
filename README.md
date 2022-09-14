@@ -1,5 +1,5 @@
 # JavaChessProject | September 2022
-This project is my own game of Chess made in Java. This project was done to test my ability as well as give me more experience with larger projects. I obtained the images from Wikipedia: <a href="https://commons.wikimedia.org/wiki/Category:PNG_chess_pieces/Standard_transparent"> link to page</a>. The rest of the code and formatting is my own done with a week of work through my personal time. <br/>
+This project is my own game of Chess made in Java. This project was done to test my ability as well as give me more experience with larger projects. I obtained the images from Wikipedia: <a href="https://commons.wikimedia.org/wiki/Category:PNG_chess_pieces/Standard_transparent"> link to page</a>. The rest of the code and formatting is my own done with a week of work through my personal time. Sample gameplay can be found below with section links and other game information. <br/>
 
 ## Section Links
 [Game Rules](#game-rules)<br/>
@@ -9,6 +9,7 @@ This project is my own game of Chess made in Java. This project was done to test
 [AI Options](#ai-options)<br/>
 [Key Mnemonics](#key-mnemonics)<br/>
 [Demo Images](#demo-images)<br/>
+<a href="https://github.com/agonzalez218/JavaChessProject/blob/master/ChessGameDemoImages/ChessGameplay.mp4"> Sample Gameplay </a>
 
 
 ## Game Rules
@@ -16,6 +17,7 @@ The Chess Game I created follows normal standard game rules:<br/>
 - White Team moves first and only one piece can be moved per turn
 - If a piece is blocking another, it can not move through it (Except a Knight which moves over pieces)
 - If the Team's King is in Check, the player can not move unless it is to block or stop the Check on their King
+- If a Pawn reaches the end of the board, it can be promoted to Knight, Bishop, Rook, or Queen
 
 ## Chess Piece Rules
 Individual Piece Moves:<br/>
@@ -69,7 +71,7 @@ Individual Piece Moves:<br/>
   - Sets Default Chess Board Color
 - ALT + E
   - Exit Game
- - ALT + H
+- ALT + H
   - Opens Chess Board Options
 - ALT + N
   - Disabes AI
@@ -83,33 +85,38 @@ Individual Piece Moves:<br/>
   - Selects White Team as AI
 
 ## Demo Images
+If you would like to see gameplay, please visit this link for <a href="https://github.com/agonzalez218/JavaChessProject/blob/master/ChessGameDemoImages/ChessGameplay.mp4"> Sample Gameplay! </a> <br/>
+
 The following image is the main playing screen<br/>
-![MainMenu](https://user-images.githubusercontent.com/60588691/188952400-ca1dc875-1b9f-43c1-aa19-0bf0c45b3548.png)
+![MainMenu](https://user-images.githubusercontent.com/60588691/190166156-afb5c7e1-274a-4a6b-a577-d5e4a822a06d.png)
 
 The following image is the result of selecting a piece on your turn (<a href="#tile-highlight-colors"> link to Tile Color legend </a> ):<br/>
-![AvailableMoves](https://user-images.githubusercontent.com/60588691/188952464-f84e277a-a31a-47c2-bf06-c76f3bf1f1dd.png)
+![AvailableMoves](https://user-images.githubusercontent.com/60588691/190166182-c8f87ce5-1ca4-4b56-968e-781b5deee960.png)
 
 The following image is the result of putting a king in check (<a href="#tile-highlight-colors"> link to Tile Color legend </a> ):<br/>
-![KingInCheck](https://user-images.githubusercontent.com/60588691/188952646-b36e0d50-00b3-46bb-a5c2-461804ed3855.png)
+![KingInCheck](https://user-images.githubusercontent.com/60588691/190166210-435462d4-3b4a-4a68-8e21-8a7666912bfc.png)
 
 The following image shows when the current selected Chess Piece is able to take an enemy piece the tile will be highlighted red (<a href="#tile-highlight-colors"> link to Tile Color legend </a> ):<br/>
 In this scenario, the Pawn will not be allowed to take the piece however, as the team's King is in Check (<a href="#game-rules"> link to Game Rules </a> ).<br/>
-![AvailableEnemyTiles](https://user-images.githubusercontent.com/60588691/189136923-c40069c8-a348-4f25-a1e2-47b1b35dcc97.png)
+![AvailableEnemyTiles](https://user-images.githubusercontent.com/60588691/190166239-0d7e304e-edcf-46d5-9a55-e2a95e721264.png)
+
+The following gif is the result of the AI promoting a pawn, and choosing an additional Queen (<a href="#game-rules"> link to Game Rules </a> ):<br/>
+![PawnPromotion](https://user-images.githubusercontent.com/60588691/190166966-dee6c303-a576-4e09-848e-9b04f4b2764f.gif)
 
 The following image is the result of pressing the concede button:<br/>
-![Concede](https://user-images.githubusercontent.com/60588691/188952941-6f633640-c5c5-44ae-928e-83d56ba10c29.png)
+![Concede](https://user-images.githubusercontent.com/60588691/190166263-40750a8f-d82f-4fdf-9df1-5bc182aa9876.png)
 
 The following image is the menu option that allows user to change Chess Board Color:<br/>
 The board maintains this color while the game window is open, even if reset or during gameplay.<br/>
-![MenuOption](https://user-images.githubusercontent.com/60588691/189186643-ec52a0f3-0fa2-4253-b62b-432374673209.png)
+![MenuOption](https://user-images.githubusercontent.com/60588691/190166296-ddc37e17-2d3c-490c-9624-9b8d6da0cb3c.png)
 
 The following image is the menu option that allows user to change AI Options:<br/>
 If Auto is chosen, it will run until a King is in check.<br/>
-![image](https://user-images.githubusercontent.com/60588691/189958750-1ac43a88-ec14-42bb-bc40-0a5cbfbce942.png)
-
+![AIMenuOption](https://user-images.githubusercontent.com/60588691/190166356-4dd6a6e3-a807-40ad-bf7a-8a01685c259b.png)
 
 The following image is the second option of the Chess Board (<a href="#chess-board-options"> link to Chess Board Options </a> ):<br/>
-![SecondChessBoardColorOption](https://user-images.githubusercontent.com/60588691/189186844-33129b33-2c25-44cf-a124-76a78a8f8ff6.png)
+![SecondChessBoardColorOption](https://user-images.githubusercontent.com/60588691/190166391-1240ffc9-f12a-46f3-9086-0c744ec1d4dc.png)
 
 The following gif is the result of using Mnemonics of the Menu options to switch between board colors (<a href="#key-mnemonics"> link to Key Mnemonics </a> ):<br/>
-![BoardColorChange](https://user-images.githubusercontent.com/60588691/189195210-cc281e16-62fa-4262-9dd2-585e71991bf3.gif)
+![BoardColorChange](https://user-images.githubusercontent.com/60588691/190166413-72293d93-bdc1-4ef8-9055-a046e763d9a1.gif)
+
