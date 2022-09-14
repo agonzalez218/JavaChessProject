@@ -150,9 +150,6 @@ public class ChessAI extends Board{
         if(Objects.equals(teamColor, "wh")) {enemyTeam = "b";}
         else{enemyTeam = "wh";}
 
-        List <JButton> tempMoveList;
-        List <JButton> tempEnemyList;
-
         for (JButton[] jButtonRow : getChessBoard()) {
             for (JButton jButton: jButtonRow){
                 if( jButton.getActionCommand().contains(teamColor))
@@ -161,80 +158,104 @@ public class ChessAI extends Board{
                     int yO = (Character.getNumericValue(firstTileInfo[0].charAt(0))-8)*-1;
                     int xO = firstTileInfo[0].charAt(1)-65;
 
+                    System.out.println(firstTileInfo[1]);
+
                     // Determine all possible moves from source piece
                     PieceMovement.determinePossibleMoves(firstTileInfo[1], yO, xO);
                     for(JButton tile : getAvailableTiles())
                     {
-                        // Create new move based on parameters
-                        Move possibleMove = new Move();
-                        possibleMove.SourceLocation = firstTileInfo[0];
-                        possibleMove.movingChessPiece = firstTileInfo[1];
-                        possibleMove.DestinationLocation = tile.getActionCommand();
-                        possibleMove.pointValue = 0;
-                        if( PieceMovement.isValidMove(possibleMove.SourceLocation, possibleMove.DestinationLocation, possibleMove.movingChessPiece) )
+                        // If pawn is being promoted
+                        if(firstTileInfo[1].contains("Pawn") && ( (getCurrentTurn().equals("wh") && tile.getActionCommand().contains("8")) || getCurrentTurn().equals("b") && tile.getActionCommand().contains("1") ))
                         {
-
-                            // Save temp copy of lists
-                            tempMoveList = getAvailableTiles();
-                            tempEnemyList = getAvailableEnemyTiles();
-                            setAvailableTiles(new ArrayList<>());
-                            setAvailableEnemyTiles(new ArrayList<>());
-                            int []sourceArrLoc = getTileArr(possibleMove.SourceLocation);
-                            int []destArrLoc = getTileArr(possibleMove.DestinationLocation);
-
-                            getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]).setActionCommand(possibleMove.SourceLocation);
-                            getChessBoardTile(destArrLoc[0],destArrLoc[1]).setActionCommand(possibleMove.DestinationLocation.substring(0,2) + "," + possibleMove.movingChessPiece);
-
-                            possibleMove.pointValue -= determineMaxLoss(enemyTeam);
-
-                            // Reset temp variables to before move
-                            getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]).setActionCommand(possibleMove.SourceLocation + "," + possibleMove.movingChessPiece);
-                            getChessBoardTile(destArrLoc[0],destArrLoc[1]).setActionCommand(possibleMove.DestinationLocation);
-                            setAvailableTiles(tempMoveList);
-                            setAvailableEnemyTiles(tempEnemyList);
-
-                            // Add move to list if valid
-                            getAvailableMoves().add(possibleMove);
+                            // Iterate through possible promotions and add to list
+                            for(int i = 0; i < 4; i++) {
+                                String piece = "";
+                                switch (i)
+                                {
+                                    case 0 -> piece = teamColor + "Knight";
+                                    case 1 -> piece = teamColor + "Bishop";
+                                    case 2 -> piece = teamColor + "Rook";
+                                    case 3 -> piece = teamColor + "Queen";
+                                }
+                                Move possibleMove = new Move();
+                                possibleMove.SourceLocation = firstTileInfo[0];
+                                possibleMove.movingChessPiece = piece;
+                                possibleMove.DestinationLocation = tile.getActionCommand();
+                                // Assigns point value based on promoted piece
+                                if(piece.contains("Knight")||piece.contains("Bishop")){possibleMove.pointValue = 30;}
+                                else if(piece.contains("Rook")){possibleMove.pointValue = 50;}
+                                else if(piece.contains("Queen")){possibleMove.pointValue = 90;}
+                                else{possibleMove.pointValue = 0;}
+                                if (PieceMovement.isValidMove(possibleMove.SourceLocation, possibleMove.DestinationLocation, possibleMove.movingChessPiece)) {
+                                    addMoveToList(possibleMove, enemyTeam);
+                                }
+                            }
+                        }
+                        else {
+                            // Create new move based on parameters
+                            Move possibleMove = new Move();
+                            possibleMove.SourceLocation = firstTileInfo[0];
+                            possibleMove.movingChessPiece = firstTileInfo[1];
+                            possibleMove.DestinationLocation = tile.getActionCommand();
+                            possibleMove.pointValue = 0;
+                            if (PieceMovement.isValidMove(possibleMove.SourceLocation, possibleMove.DestinationLocation, possibleMove.movingChessPiece)) {
+                                addMoveToList(possibleMove, enemyTeam);
+                            }
                         }
                     }
-                    for( JButton tile : getAvailableEnemyTiles() )
-                    {
-                        Move possibleMove = new Move();
-                        possibleMove.SourceLocation = firstTileInfo[0];
-                        possibleMove.movingChessPiece = firstTileInfo[1];
-                        possibleMove.DestinationLocation = tile.getActionCommand();
-                        if( PieceMovement.isValidMove(possibleMove.SourceLocation, possibleMove.DestinationLocation, possibleMove.movingChessPiece))
-                        {
-                            // Assigns point value based on piece taken
-                            if(possibleMove.DestinationLocation.contains("Pawn")){possibleMove.pointValue = 10;}
-                            else if(possibleMove.DestinationLocation.contains("Knight")||possibleMove.DestinationLocation.contains("Bishop")){possibleMove.pointValue = 30;}
-                            else if(possibleMove.DestinationLocation.contains("Rook")){possibleMove.pointValue = 50;}
-                            else if(possibleMove.DestinationLocation.contains("Queen")){possibleMove.pointValue = 90;}
-                            else if(possibleMove.DestinationLocation.contains("King")){possibleMove.pointValue = 900;}
-                            else{possibleMove.pointValue = 0;}
+                    for( JButton tile : getAvailableEnemyTiles() ) {
+                        // If pawn is being promoted
+                        if (firstTileInfo[1].contains("Pawn") && ((getCurrentTurn().equals("wh") && tile.getActionCommand().contains("8")) || getCurrentTurn().equals("b") && tile.getActionCommand().contains("1"))) {
+                            // Iterate through possible promotions and add to list
+                            for (int i = 0; i < 4; i++) {
+                                String piece = "";
+                                switch (i) {
+                                    case 0 -> piece = teamColor + "Knight";
+                                    case 1 -> piece = teamColor + "Bishop";
+                                    case 2 -> piece = teamColor + "Rook";
+                                    case 3 -> piece = teamColor + "Queen";
+                                }
+                                Move possibleMove = new Move();
+                                possibleMove.SourceLocation = firstTileInfo[0];
+                                possibleMove.movingChessPiece = piece;
+                                possibleMove.DestinationLocation = tile.getActionCommand();
+                                // Assigns point value based on promoted piece
+                                if (piece.contains("Knight") || piece.contains("Bishop")) {
+                                    possibleMove.pointValue = 30;
+                                } else if (piece.contains("Rook")) {
+                                    possibleMove.pointValue = 50;
+                                } else if (piece.contains("Queen")) {
+                                    possibleMove.pointValue = 90;
+                                } else {
+                                    possibleMove.pointValue = 0;
+                                }
+                                if (PieceMovement.isValidMove(possibleMove.SourceLocation, possibleMove.DestinationLocation, possibleMove.movingChessPiece)) {
+                                    addMoveToList(possibleMove, enemyTeam);
+                                }
+                            }
+                        } else {
+                            Move possibleMove = new Move();
+                            possibleMove.SourceLocation = firstTileInfo[0];
+                            possibleMove.movingChessPiece = firstTileInfo[1];
+                            possibleMove.DestinationLocation = tile.getActionCommand();
+                            if (PieceMovement.isValidMove(possibleMove.SourceLocation, possibleMove.DestinationLocation, possibleMove.movingChessPiece)) {
+                                // Assigns point value based on piece taken
+                                if (possibleMove.DestinationLocation.contains("Pawn")) {
+                                    possibleMove.pointValue = 10;
+                                } else if (possibleMove.DestinationLocation.contains("Knight") || possibleMove.DestinationLocation.contains("Bishop")) {
+                                    possibleMove.pointValue = 30;
+                                } else if (possibleMove.DestinationLocation.contains("Rook")) {
+                                    possibleMove.pointValue = 50;
+                                } else if (possibleMove.DestinationLocation.contains("Queen")) {
+                                    possibleMove.pointValue = 90;
+                                } else if (possibleMove.DestinationLocation.contains("King")) {
+                                    possibleMove.pointValue = 900;
+                                } else {
+                                    possibleMove.pointValue = 0;
+                                }
 
-                            // Save temp copy of lists
-                            tempMoveList = getAvailableTiles();
-                            tempEnemyList = getAvailableEnemyTiles();
-                            setAvailableTiles(new ArrayList<>());
-                            setAvailableEnemyTiles(new ArrayList<>());
-                            int []sourceArrLoc = getTileArr(possibleMove.SourceLocation);
-                            int []destArrLoc = getTileArr(possibleMove.DestinationLocation);
-
-                            getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]).setActionCommand(possibleMove.SourceLocation);
-                            getChessBoardTile(destArrLoc[0],destArrLoc[1]).setActionCommand(possibleMove.DestinationLocation.substring(0,2) + "," + possibleMove.movingChessPiece);
-
-                            possibleMove.pointValue -= determineMaxLoss(enemyTeam);
-
-                            // Reset temp variables to before move
-                            getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]).setActionCommand(possibleMove.SourceLocation + "," + possibleMove.movingChessPiece);
-                            getChessBoardTile(destArrLoc[0],destArrLoc[1]).setActionCommand(possibleMove.DestinationLocation);
-                            setAvailableTiles(tempMoveList);
-                            setAvailableEnemyTiles(tempEnemyList);
-
-                            // Add move to list if valid
-
-                            getAvailableMoves().add(possibleMove);
+                                addMoveToList(possibleMove, enemyTeam);
+                            }
                         }
                     }
 
@@ -298,7 +319,44 @@ public class ChessAI extends Board{
                 }
             }
         }
-
         return max;
+    }
+
+    /*
+   Parameters:
+       Move possibleMove: possible move generated with piece
+       String teamColor: string containing the color of the current user's team
+   Return Value:
+       Return: int value with max point move by enemy player
+   Description:
+       Adds single possible move to list after determining point value.
+       Final point value is determined after move is confirmed, then best move of enemy is tested.
+    */
+    public static void addMoveToList(Move possibleMove, String enemyTeam)
+    {
+        List <JButton> tempMoveList;
+        List <JButton> tempEnemyList;
+
+        // Save temp copy of lists
+        tempMoveList = getAvailableTiles();
+        tempEnemyList = getAvailableEnemyTiles();
+        setAvailableTiles(new ArrayList<>());
+        setAvailableEnemyTiles(new ArrayList<>());
+        int []sourceArrLoc = getTileArr(possibleMove.SourceLocation);
+        int []destArrLoc = getTileArr(possibleMove.DestinationLocation);
+
+        getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]).setActionCommand(possibleMove.SourceLocation);
+        getChessBoardTile(destArrLoc[0],destArrLoc[1]).setActionCommand(possibleMove.DestinationLocation.substring(0,2) + "," + possibleMove.movingChessPiece);
+
+        possibleMove.pointValue -= determineMaxLoss(enemyTeam);
+
+        // Reset temp variables to before move
+        getChessBoardTile(sourceArrLoc[0],sourceArrLoc[1]).setActionCommand(possibleMove.SourceLocation + "," + possibleMove.movingChessPiece);
+        getChessBoardTile(destArrLoc[0],destArrLoc[1]).setActionCommand(possibleMove.DestinationLocation);
+        setAvailableTiles(tempMoveList);
+        setAvailableEnemyTiles(tempEnemyList);
+
+        // Add move to list if valid
+        getAvailableMoves().add(possibleMove);
     }
 }

@@ -614,7 +614,7 @@ public class PieceMovement extends Board{
         getChessBoardTile(xO,yO).setIcon(null);
         addIconToButton(s + getMovingPiece() + ".png", getChessBoardTile(xN,yN));
 
-        if( movingPiece.contains("Pawn") && ( (getCurrentTurn().equals("wh") && newLocation.contains("8")) || getCurrentTurn().equals("b") && newLocation.contains("1") ))
+        if( movingPiece.contains("Pawn") && ( (getCurrentTurn().equals("wh") && newLocation.contains("8")) || getCurrentTurn().equals("b") && newLocation.contains("1") ) && !getCurrentTurn().equals(getAIColor()))
         {
             promotePawn(newLocation);
         }
@@ -740,10 +740,12 @@ public class PieceMovement extends Board{
                 "Pawn Promotion",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
-                null,     //do not use a custom Icon
+                null,
                 options,  //the titles of buttons
                 options[0]); //default button title
         System.out.println(n);
+
+        // Set pawn to different piece based on choice
         switch(n)
         {
             case 0 -> {
